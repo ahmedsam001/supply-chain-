@@ -1,0 +1,78 @@
+# ─────────────────────────────────────────────────────────────────────
+# Extraction Configuration
+# ─────────────────────────────────────────────────────────────────────
+
+extraction:
+  # Global defaults — can be overridden per source in sources.yaml
+  defaults:
+    headless: true
+    max_pages: 50
+    max_products_per_run: 500
+    timeout_seconds: 30
+    max_retries: 3
+    concurrent_extractors: 1
+
+  # Browser configuration
+  browser:
+    type: chromium
+    headless: true
+    viewport:
+      width: 1920
+      height: 1080
+    slow_mo_ms: 100
+
+  # Storage paths
+  storage:
+    data_dir: "./data"
+    raw_dir: "./data/raw"
+    bronze_dir: "./data/bronze"
+    silver_dir: "./data/silver"
+    gold_dir: "./data/gold"
+    research_dir: "./data/research"
+    logs_dir: "./logs"
+
+  # Logging
+  logging:
+    level: "INFO"
+    format: "json"
+    file: "./logs/extraction.log"
+
+  # Schedule
+  schedule:
+    # For the 7-day initial collection
+    initial_collection_days: 7
+    # Daily run time (UTC)
+    daily_run_hour: 6
+    daily_run_minute: 0
+
+  # Egyptian geography reference
+  geography:
+    country: "Egypt"
+    governorates:
+      - Cairo
+      - Giza
+      - Alexandria
+      - Qalyubia
+      - Sharqia
+      - Dakahlia
+      - Beheira
+      - Monufia
+      - Gharbia
+      - Kafr El Sheikh
+      - Damietta
+      - Port Said
+      - Ismailia
+      - Suez
+      - North Sinai
+      - South Sinai
+      - Fayoum
+      - Beni Suef
+      - Minya
+      - Asyut
+      - Sohag
+      - Qena
+      - Luxor
+      - Aswan
+      - Red Sea
+      - New Valley
+      - Matrouh

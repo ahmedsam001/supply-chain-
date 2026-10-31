@@ -1,0 +1,28 @@
+[
+  {
+    "issue_id": "7acb7f43-7317-4705-9419-65b5f8fc725f",
+    "run_id": "sample_dream2000_20260928",
+    "source_id": "dream2000",
+    "entity_type": "observation",
+    "entity_id": "8255329501323",
+    "issue_code": "MISSING_FIELD",
+    "severity": "low",
+    "message": "Observation 8255329501323: missing seller_name",
+    "raw_value": null,
+    "source_url": "https://dream2000.com/products/honor-600-dual-sim-5g-golden-earbuds-x7e-active-cover",
+    "detected_at": "2026-09-28T18:13:31.121672Z"
+  },
+  {
+    "issue_id": "3a95c45f-c8da-4fbb-a541-2a3fcc1f0825",
+    "run_id": "sample_dream2000_20260928",
+    "source_id": "dream2000",
+    "entity_type": "observation",
+    "entity_id": "8459590140043",
+    "issue_code": "MISSING_FIELD",
+    "severity": "low",
+    "message": "Observation 8459590140043: missing seller_name",
+    "raw_value": null,
+    "source_url": "https://dream2000.com/products/cardoo-45w-pd-usb-c-home-charger",
+    "detected_at": "2026-09-28T18:13:31.121692Z"
+  }
+]

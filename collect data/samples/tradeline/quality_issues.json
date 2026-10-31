@@ -1,0 +1,54 @@
+[
+  {
+    "issue_id": "a5cfbd34-f06a-4547-8555-aa0e05620967",
+    "run_id": "sample_tradeline_20260928",
+    "source_id": "tradeline",
+    "entity_type": "product",
+    "entity_id": "8413231087682",
+    "issue_code": "MISSING_FIELD",
+    "severity": "low",
+    "message": "Product 8413231087682: missing GTIN",
+    "raw_value": null,
+    "source_url": "https://www.tradelinestores.com/products/apple-iphone-16-pro-128gb-black-titanium",
+    "detected_at": "2026-09-28T18:13:31.119711Z"
+  },
+  {
+    "issue_id": "1bf93916-b6d3-42d9-8245-ba4898d48d91",
+    "run_id": "sample_tradeline_20260928",
+    "source_id": "tradeline",
+    "entity_type": "product",
+    "entity_id": "8411009712194",
+    "issue_code": "MISSING_FIELD",
+    "severity": "low",
+    "message": "Product 8411009712194: missing GTIN",
+    "raw_value": null,
+    "source_url": "https://www.tradelinestores.com/products/apple-airpods-pro-2nd-generation-usb-c",
+    "detected_at": "2026-09-28T18:13:31.119791Z"
+  },
+  {
+    "issue_id": "2b48082a-f7ce-4cfb-b1ca-6371fde1bb40",
+    "run_id": "sample_tradeline_20260928",
+    "source_id": "tradeline",
+    "entity_type": "observation",
+    "entity_id": "8413231087682",
+    "issue_code": "MISSING_FIELD",
+    "severity": "low",
+    "message": "Observation 8413231087682: missing seller_name",
+    "raw_value": null,
+    "source_url": "https://www.tradelinestores.com/products/apple-iphone-16-pro-128gb-black-titanium",
+    "detected_at": "2026-09-28T18:13:31.119874Z"
+  },
+  {
+    "issue_id": "daa1832d-fd60-4806-9e26-fd6ff78a7ec3",
+    "run_id": "sample_tradeline_20260928",
+    "source_id": "tradeline",
+    "entity_type": "observation",
+    "entity_id": "8411009712194",
+    "issue_code": "MISSING_FIELD",
+    "severity": "low",
+    "message": "Observation 8411009712194: missing seller_name",
+    "raw_value": null,
+    "source_url": "https://www.tradelinestores.com/products/apple-airpods-pro-2nd-generation-usb-c",
+    "detected_at": "2026-09-28T18:13:31.119888Z"
+  }
+]

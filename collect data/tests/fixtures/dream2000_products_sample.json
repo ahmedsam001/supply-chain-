@@ -1,0 +1,44 @@
+{
+  "products": [
+    {
+      "id": 8255329501323,
+      "title": "هونر 600 5G بشرحتين مع سماعات X7e Active",
+      "vendor": "Honor",
+      "product_type": "Smartphones",
+      "handle": "honor-600-dual-sim-5g-golden-earbuds-x7e-active-cover",
+      "body_html": "Honor 600 5G",
+      "images": [{"src": "https://cdn.shopify.com/s/files/1/0741/2557/4283/files/honor-600.jpg"}],
+      "tags": ["honor", "smartphone", "5g"],
+      "variants": [
+        {
+          "id": 44110000000001,
+          "sku": "6942785106048",
+          "price": "29990.00",
+          "compare_at_price": "36000.00",
+          "available": true,
+          "title": "Default Title"
+        }
+      ]
+    },
+    {
+      "id": 8459590140043,
+      "title": "شاحن حائط Cardoo بقوة 45 وات PD بمنفذي USB-C وUSB-A – أبيض",
+      "vendor": "Cardoo",
+      "product_type": "Chargers",
+      "handle": "cardoo-45w-pd-usb-c-home-charger",
+      "body_html": "45W fast charger",
+      "images": [{"src": "https://cdn.shopify.com/s/files/1/0741/2557/4283/files/cardoo-charger.jpg"}],
+      "tags": ["charger", "cardoo", "usb-c"],
+      "variants": [
+        {
+          "id": 44110000000002,
+          "sku": "6223019370191",
+          "price": "650.00",
+          "compare_at_price": "850.00",
+          "available": true,
+          "title": "Default Title"
+        }
+      ]
+    }
+  ]
+}

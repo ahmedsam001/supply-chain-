@@ -1,0 +1,51 @@
+{
+  "source_id": "tradeline",
+  "source_name": "Tradeline Stores",
+  "homepage": {
+    "final_url": "https://tradelinestores.com/",
+    "title": "TradelineStores",
+    "status": 200,
+    "has_search": true
+  },
+  "category_page": {
+    "final_url": "https://tradelinestores.com/collections/mac",
+    "title": "404 Not Found – TradelineStores",
+    "product_cards_detected": 0,
+    "card_selector": null,
+    "has_pagination": true,
+    "sample_product_links": []
+  },
+  "product_page": {
+    "final_url": "https://tradelinestores.com/products/macbook-air-13-m3-chip-2024-8c-cpu-8c-gpu-8gb-256gb-ssd-midnight",
+    "title": "404 Not Found – TradelineStores",
+    "json_ld_blocks_found": 1,
+    "json_ld_data": [
+      {
+        "@context": "http://schema.org",
+        "@type": "Organization",
+        "name": "TradelineStores",
+        "logo": "https://tradelinestores.com/cdn/shop/files/Tradeline_-_Final_Logo_2026-01.png?v=1785841326&width=500",
+        "sameAs": [
+          "https://x.com/TradelineEgypt",
+          "https://www.facebook.com/Tradelinestores",
+          "",
+          "https://www.instagram.com/tradelinestores/",
+          "https://www.tiktok.com/@tradelinestores",
+          "",
+          "",
+          "https://www.youtube.com/@TradelineStoresEgypt",
+          ""
+        ],
+        "url": "https://tradelinestores.com"
+      }
+    ],
+    "has_price_element": false,
+    "has_sku_element": false
+  },
+  "store_locator": {
+    "url": "https://tradelinestores.com/pages/store-locator",
+    "title": "Store Locator – TradelineStores",
+    "location_markers_detected": 201
+  },
+  "summary": {}
+}

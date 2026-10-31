@@ -1,0 +1,40 @@
+{
+  "source": "raya",
+  "source_id": "raya",
+  "run_mode": "synthetic",
+  "mode": "synthetic",
+  "run_id": "sample_raya_20260928",
+  "watchlist_id": "watchlist_v1",
+  "retrieved_at": "2026-09-28T18:13:31.109103+00:00",
+  "collected_at": "2026-09-28T18:13:31.109103+00:00",
+  "source_url": "https://www.rayashop.com/en/samsung-galaxy-a55-5g-128gb-awesome-iceblue.html",
+  "record_count": {
+    "products": 2,
+    "observations": 2,
+    "locations": 0,
+    "total": 4
+  },
+  "products_count": 2,
+  "observations_count": 2,
+  "locations_count": 0,
+  "quality_issues_count": 4,
+  "quality_score": 80.0,
+  "overall_quality_score": 80.0,
+  "null_rates": {
+    "products": {
+      "product_name": 0.0,
+      "sku": 0.0,
+      "gtin": 1.0,
+      "brand": 0.0,
+      "category": 0.0,
+      "image_url": 0.0
+    },
+    "observations": {
+      "price": 0.0,
+      "old_price": 1.0,
+      "discount": 1.0,
+      "seller_name": 1.0,
+      "stock_quantity": 1.0
+    }
+  }
+}

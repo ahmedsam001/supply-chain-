@@ -1,0 +1,1115 @@
+[
+  {
+    "url": "https://consentcdn.cookiebot.com/consentconfig/73b870e0-a752-4b9a-9655-1e0babb6301d/settings.json",
+    "method": "GET",
+    "resource_type": "xhr",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://tradelinestores.com/?section_id=sections--18658975744066__header",
+    "method": "GET",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "sec-ch-viewport-width": "1440",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://tradelinestores.com/?section_id=sections--18658975744066__header",
+    "method": "GET",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "sec-ch-viewport-width": "1440",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://tradelinestores.com/?section_id=sections--18658975776834__footer",
+    "method": "GET",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "sec-ch-viewport-width": "1440",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://tradelinestores.com/?section_id=sections--18658975744066__header",
+    "method": "GET",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "sec-ch-viewport-width": "1440",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://tradelinestores.com/?section_id=template--18658975088706__partner-stripe-homepage",
+    "method": "GET",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "sec-ch-viewport-width": "1440",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://tradelinestores.com/api/collect",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "content-type": "application/json",
+      "sec-ch-viewport-width": "1440",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://otlp-http-production.shopifysvc.com/v1/metrics",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "content-type": "application/json",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://ugjbcd-yt.myshopify.com/api/2024-07/graphql.json",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "content-type": "application/json",
+      "x-shopify-storefront-access-token": "bb33f586312a3c47ebed094384207b2f",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://www.google.com/rmkt/collect/11453388766/?random=1790452394636&cv=11&fst=1790452394636&fmt=8&bg=ffffff&guid=ON&async=1&en=gtag.config&gtm=45be69n1v9174372991za200zd9174372991xecxf1&gcd=13l3l3l3l1l1&dma=0&tag_exp=115938465~115938469~118897920~118897930~120213116~120385422~120469145~120469153~121191154&u_w=1440&u_h=900&url=https%3A%2F%2Ftradelinestores.com%2F&rcb=5&frm=0&tiba=TradelineStores&did=dN2ZkMj&gdid=dN2ZkMj&hn=www.googleadservices.com&npa=0&us_privacy=1YNY&pscdl=noapi&auid=1579204645.1790452395&data=event%3Dgtag.config&ept=68&gcp=5",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://www.google.com/rmkt/collect/17925177963/?random=1790452394657&cv=11&fst=1790452394657&fmt=8&bg=ffffff&guid=ON&async=1&en=gtag.config&gtm=45be69n1v9174372991za200zd9174372991xecxf1&gcd=13l3l3l3l1l1&dma=0&tag_exp=115938465~115938469~118897920~118897930~120213116~120385422~120469145~120469153~121191154&u_w=1440&u_h=900&url=https%3A%2F%2Ftradelinestores.com%2F&rcb=5&frm=0&tiba=TradelineStores&did=dN2ZkMj&gdid=dN2ZkMj&hn=www.googleadservices.com&npa=0&us_privacy=1YNY&pscdl=noapi&auid=1579204645.1790452395&data=event%3Dgtag.config&ept=68&gcp=5",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://www.google.com/ccm/collect?rcb=5&frm=0&apvc=1&auid=1579204645.1790452395&dt=TradelineStores&tid=AW-11453388766&en=page_view&dl=https%3A%2F%2Ftradelinestores.com%2F&scrsrc=www.googletagmanager.com&rnd=730854354.1790452395&navt=n&npa=0&us_privacy=1YNY&did=dN2ZkMj&gdid=dN2ZkMj&gtm=45be69n1v9174372991za200zd9174372991xecxf1&gcd=13l3l3l3l1l1&dma=0&tag_exp=115938465~115938469~118897920~118897930~120213116~120385422~120469145~120469153~121191154&tft=1790452394668&tfd=1770&tids=AW-11453388766~AW-17925177963&fmt=8",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://ad.doubleclick.net/ccm/s/collect?auid=1579204645.1790452395&gtm=45be69n1v9174372991za200zd9174372991xecxf1&fmt=8",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://analytics.google.com/g/collect?v=2&tid=G-VGQQNNXQ19&gtm=45be69n1v9174372991za200zd9174372991xf1&_p=1790452393789&_gaz=1&gcd=13l3l3l3l1l1&npa=0&dma=0&gdid=dN2ZkMj.dMWZhNz&_eu=AAAAACAC&cid=1420067880.1790452395&frm=0&ibt=1&ngs=1&pscdl=noapi&rcb=5&sr=1440x900&uaa=x86&uab=64&uafvl=HeadlessChrome%3B153.0.8010.12%7CNot_A%2520Brand%3B8.0.0.0%7CChromium%3B153.0.8010.12&uam=&uamb=0&uap=Linux&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115938465~115938469~118897920~118897930~120213116~120385422~120469145~120469153~121191154&sid=1790452394&sct=1&seg=0&dl=https%3A%2F%2Ftradelinestores.com%2F&dt=TradelineStores&en=page_view&_fv=1&_nsi=1&_ss=1&_ee=1&tfd=1785",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://tradelinestores.com/cart.js",
+    "method": "GET",
+    "resource_type": "xhr",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "sec-ch-ua-mobile": "?0",
+      "x-requested-with": "XMLHttpRequest",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "accept": "application/json, text/javascript, */*; q=0.01",
+      "sec-ch-viewport-width": "1440"
+    }
+  },
+  {
+    "url": "https://analytics.google.com/g/collect?v=2&tid=G-WTB4027LZ7&gtm=45je69n1v9118944950za200zb9174372991zd9174372991xf1&_p=1790452393789&_gaz=1&gcd=13l3l3l3l1l1&npa=0&dma=0&gdid=dN2ZkMj.dMWZhNz&_eu=AAAAAGAC&cid=1420067880.1790452395&frm=0&pscdl=noapi&rcb=16&sr=1440x900&uaa=x86&uab=64&uafvl=HeadlessChrome%3B153.0.8010.12%7CNot_A%2520Brand%3B8.0.0.0%7CChromium%3B153.0.8010.12&uam=&uamb=0&uap=Linux&uapv=&uaw=0&ul=en-us&gaf=2&_s=1&tag_exp=115616986~115938465~115938469~118897920~118897930~120213116~120385422~120469145~120469153&sid=1790452394&sct=1&seg=0&dl=https%3A%2F%2Ftradelinestores.com%2F&dt=TradelineStores&en=page_view&_fv=1&_ss=1&_ee=1&tfd=1906",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://dpm.demdex.net/id?d_visid_ver=5.5.0&d_fieldgroup=MC&d_rtbd=json&d_ver=2&d_orgid=F62E1D52666B14BA0A495CA8%40AdobeOrg&d_nsid=0&ts=1790452394839",
+    "method": "GET",
+    "resource_type": "xhr",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "content-type": "application/x-www-form-urlencoded",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://sessions.bugsnag.com/",
+    "method": "POST",
+    "resource_type": "xhr",
+    "headers": {
+      "bugsnag-payload-version": "1.0",
+      "bugsnag-api-key": "a51246d2a1f718541183be260c6215bd",
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "sec-ch-ua-mobile": "?0",
+      "bugsnag-sent-at": "2026-09-26T19:53:14.867Z",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "content-type": "application/json"
+    }
+  },
+  {
+    "url": "https://otlp-http-production.shopifysvc.com/v1/metrics",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "content-type": "application/json",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://otlp-http-production.shopifysvc.com/v1/metrics",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "content-type": "application/json",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://tradelinestores.com/services/login_with_shop/buyer/finalize",
+    "method": "GET",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "sec-ch-viewport-width": "1440",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true",
+    "method": "GET",
+    "resource_type": "xhr",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://appleapp.tradelinestores.com/id?d_visid_ver=5.5.0&d_fieldgroup=A&mcorgid=F62E1D52666B14BA0A495CA8%40AdobeOrg&mid=36218741040780713692222574719491894699&ts=1790452395267",
+    "method": "GET",
+    "resource_type": "xhr",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "content-type": "application/x-www-form-urlencoded",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://otlp-http-production.shopifysvc.com/v1/metrics",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "content-type": "application/json",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://otlp-http-production.shopifysvc.com/v1/metrics",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "content-type": "application/json",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://otlp-http-production.shopifysvc.com/v1/metrics",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "content-type": "application/json",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://otlp-http-production.shopifysvc.com/v1/metrics",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "content-type": "application/json",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://otlp-http-production.shopifysvc.com/v1/logs",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "content-type": "application/json",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://consentcdn.cookiebot.com/consentconfig/73b870e0-a752-4b9a-9655-1e0babb6301d/settings.json",
+    "method": "GET",
+    "resource_type": "xhr",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/collections/mac",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://otlp-http-production.shopifysvc.com/v1/metrics",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/collections/mac",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "content-type": "application/json",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://tradelinestores.com/collections/mac?section_id=sections--18658975744066__header",
+    "method": "GET",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/collections/mac",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "sec-ch-viewport-width": "1440",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://tradelinestores.com/collections/mac?section_id=sections--18658975744066__header",
+    "method": "GET",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/collections/mac",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "sec-ch-viewport-width": "1440",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://tradelinestores.com/api/collect",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/collections/mac",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "content-type": "application/json",
+      "sec-ch-viewport-width": "1440",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://ugjbcd-yt.myshopify.com/api/2024-07/graphql.json",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/collections/mac",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "content-type": "application/json",
+      "x-shopify-storefront-access-token": "bb33f586312a3c47ebed094384207b2f",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://tradelinestores.com/collections/mac?section_id=sections--18658975744066__header",
+    "method": "GET",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/collections/mac",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "sec-ch-viewport-width": "1440",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://otlp-http-production.shopifysvc.com/v1/metrics",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/collections/mac",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "content-type": "application/json",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://otlp-http-production.shopifysvc.com/v1/logs",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/collections/mac",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "content-type": "application/json",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://www.google.com/rmkt/collect/11453388766/?random=1790452397334&cv=11&fst=1790452397334&fmt=8&bg=ffffff&guid=ON&async=1&en=gtag.config&gtm=45be69n1v9174372991za200zd9174372991xecxf1&gcd=13l3l3l3l1l1&dma=0&tag_exp=115938466~115938469~118897920~118897930~120213116~120385423~120469145~120469153~121191154&u_w=1440&u_h=900&url=https%3A%2F%2Ftradelinestores.com%2Fcollections%2Fmac&rcb=18&frm=0&tiba=404%20Not%20Found%20%E2%80%93%20TradelineStores&did=dN2ZkMj&gdid=dN2ZkMj&hn=www.googleadservices.com&npa=0&us_privacy=1YNY&pscdl=noapi&auid=1579204645.1790452395&data=event%3Dgtag.config&ept=68&gcp=5",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/collections/mac",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://www.google.com/rmkt/collect/17925177963/?random=1790452397342&cv=11&fst=1790452397342&fmt=8&bg=ffffff&guid=ON&async=1&en=gtag.config&gtm=45be69n1v9174372991za200zd9174372991xecxf1&gcd=13l3l3l3l1l1&dma=0&tag_exp=115938466~115938469~118897920~118897930~120213116~120385423~120469145~120469153~121191154&u_w=1440&u_h=900&url=https%3A%2F%2Ftradelinestores.com%2Fcollections%2Fmac&rcb=18&frm=0&tiba=404%20Not%20Found%20%E2%80%93%20TradelineStores&did=dN2ZkMj&gdid=dN2ZkMj&hn=www.googleadservices.com&npa=0&us_privacy=1YNY&pscdl=noapi&auid=1579204645.1790452395&data=event%3Dgtag.config&ept=68&gcp=5",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/collections/mac",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://www.google.com/ccm/collect?rcb=18&frm=0&apvc=1&auid=1579204645.1790452395&dt=404%20Not%20Found%20%E2%80%93%20TradelineStores&tid=AW-11453388766&en=page_view&dl=https%3A%2F%2Ftradelinestores.com%2Fcollections%2Fmac&scrsrc=www.googletagmanager.com&rnd=588065302.1790452397&navt=n&npa=0&us_privacy=1YNY&did=dN2ZkMj&gdid=dN2ZkMj&gtm=45be69n1v9174372991za200zd9174372991xecxf1&gcd=13l3l3l3l1l1&dma=0&tag_exp=115938466~115938469~118897920~118897930~120213116~120385423~120469145~120469153~121191154&tft=1790452397350&tfd=686&tids=AW-11453388766~AW-17925177963&fmt=8",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/collections/mac",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://sessions.bugsnag.com/",
+    "method": "POST",
+    "resource_type": "xhr",
+    "headers": {
+      "bugsnag-payload-version": "1.0",
+      "bugsnag-api-key": "a51246d2a1f718541183be260c6215bd",
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/collections/mac",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "sec-ch-ua-mobile": "?0",
+      "bugsnag-sent-at": "2026-09-26T19:53:17.434Z",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "content-type": "application/json"
+    }
+  },
+  {
+    "url": "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true",
+    "method": "GET",
+    "resource_type": "xhr",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/collections/mac",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://tradelinestores.com/cart.js",
+    "method": "GET",
+    "resource_type": "xhr",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/collections/mac",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "sec-ch-ua-mobile": "?0",
+      "x-requested-with": "XMLHttpRequest",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "accept": "application/json, text/javascript, */*; q=0.01",
+      "sec-ch-viewport-width": "1440"
+    }
+  },
+  {
+    "url": "https://otlp-http-production.shopifysvc.com/v1/metrics",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/collections/mac",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "content-type": "application/json",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://consentcdn.cookiebot.com/consentconfig/73b870e0-a752-4b9a-9655-1e0babb6301d/settings.json",
+    "method": "GET",
+    "resource_type": "xhr",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/products/macbook-air-13-m3-chip-2024-8c-cpu-8c-gpu-8gb-256gb-ssd-midnight",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://otlp-http-production.shopifysvc.com/v1/metrics",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/products/macbook-air-13-m3-chip-2024-8c-cpu-8c-gpu-8gb-256gb-ssd-midnight",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "content-type": "application/json",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://otlp-http-production.shopifysvc.com/v1/metrics",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/products/macbook-air-13-m3-chip-2024-8c-cpu-8c-gpu-8gb-256gb-ssd-midnight",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "accept": "*/*",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "content-type": "application/json; charset=utf-8",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://tradelinestores.com/products/macbook-air-13-m3-chip-2024-8c-cpu-8c-gpu-8gb-256gb-ssd-midnight?section_id=sections--18658975744066__header",
+    "method": "GET",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/products/macbook-air-13-m3-chip-2024-8c-cpu-8c-gpu-8gb-256gb-ssd-midnight",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "sec-ch-viewport-width": "1440",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://tradelinestores.com/products/macbook-air-13-m3-chip-2024-8c-cpu-8c-gpu-8gb-256gb-ssd-midnight?section_id=sections--18658975744066__header",
+    "method": "GET",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/products/macbook-air-13-m3-chip-2024-8c-cpu-8c-gpu-8gb-256gb-ssd-midnight",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "sec-ch-viewport-width": "1440",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://tradelinestores.com/api/collect",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/products/macbook-air-13-m3-chip-2024-8c-cpu-8c-gpu-8gb-256gb-ssd-midnight",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "content-type": "application/json",
+      "sec-ch-viewport-width": "1440",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://ugjbcd-yt.myshopify.com/api/2024-07/graphql.json",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/products/macbook-air-13-m3-chip-2024-8c-cpu-8c-gpu-8gb-256gb-ssd-midnight",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "content-type": "application/json",
+      "x-shopify-storefront-access-token": "bb33f586312a3c47ebed094384207b2f",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://tradelinestores.com/products/macbook-air-13-m3-chip-2024-8c-cpu-8c-gpu-8gb-256gb-ssd-midnight?section_id=sections--18658975744066__header",
+    "method": "GET",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/products/macbook-air-13-m3-chip-2024-8c-cpu-8c-gpu-8gb-256gb-ssd-midnight",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "sec-ch-viewport-width": "1440",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://otlp-http-production.shopifysvc.com/v1/metrics",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/products/macbook-air-13-m3-chip-2024-8c-cpu-8c-gpu-8gb-256gb-ssd-midnight",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "content-type": "application/json",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://otlp-http-production.shopifysvc.com/v1/logs",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/products/macbook-air-13-m3-chip-2024-8c-cpu-8c-gpu-8gb-256gb-ssd-midnight",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "content-type": "application/json",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://www.google.com/rmkt/collect/11453388766/?random=1790452400024&cv=11&fst=1790452400024&fmt=8&bg=ffffff&guid=ON&async=1&en=gtag.config&gtm=45be69n1v9174372991za200zd9174372991xecxf1&gcd=13l3l3l3l1l1&dma=0&tag_exp=115938465~115938469~118897920~118897930~120213116~120385423~120469145~120469153~121191154~121280969&u_w=1440&u_h=900&url=https%3A%2F%2Ftradelinestores.com%2Fproducts%2Fmacbook-air-13-m3-chip-2024-8c-cpu-8c-gpu-8gb-256gb-ssd-midnight&rcb=14&frm=0&tiba=404%20Not%20Found%20%E2%80%93%20TradelineStores&did=dN2ZkMj&gdid=dN2ZkMj&hn=www.googleadservices.com&npa=0&us_privacy=1YNY&pscdl=noapi&auid=1579204645.1790452395&data=event%3Dgtag.config&ept=68&gcp=5",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/products/macbook-air-13-m3-chip-2024-8c-cpu-8c-gpu-8gb-256gb-ssd-midnight",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://www.google.com/rmkt/collect/17925177963/?random=1790452400032&cv=11&fst=1790452400032&fmt=8&bg=ffffff&guid=ON&async=1&en=gtag.config&gtm=45be69n1v9174372991za200zd9174372991xecxf1&gcd=13l3l3l3l1l1&dma=0&tag_exp=115938465~115938469~118897920~118897930~120213116~120385423~120469145~120469153~121191154~121280969&u_w=1440&u_h=900&url=https%3A%2F%2Ftradelinestores.com%2Fproducts%2Fmacbook-air-13-m3-chip-2024-8c-cpu-8c-gpu-8gb-256gb-ssd-midnight&rcb=14&frm=0&tiba=404%20Not%20Found%20%E2%80%93%20TradelineStores&did=dN2ZkMj&gdid=dN2ZkMj&hn=www.googleadservices.com&npa=0&us_privacy=1YNY&pscdl=noapi&auid=1579204645.1790452395&data=event%3Dgtag.config&ept=68&gcp=5",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/products/macbook-air-13-m3-chip-2024-8c-cpu-8c-gpu-8gb-256gb-ssd-midnight",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://www.google.com/ccm/collect?rcb=14&frm=0&apvc=1&auid=1579204645.1790452395&dt=404%20Not%20Found%20%E2%80%93%20TradelineStores&tid=AW-11453388766&en=page_view&dl=https%3A%2F%2Ftradelinestores.com%2Fproducts%2Fmacbook-air-13-m3-chip-2024-8c-cpu-8c-gpu-8gb-256gb-ssd-midnight&scrsrc=www.googletagmanager.com&rnd=185906983.1790452400&navt=n&npa=0&us_privacy=1YNY&did=dN2ZkMj&gdid=dN2ZkMj&gtm=45be69n1v9174372991za200zd9174372991xecxf1&gcd=13l3l3l3l1l1&dma=0&tag_exp=115938465~115938469~118897920~118897930~120213116~120385423~120469145~120469153~121191154~121280969&tft=1790452400040&tfd=620&tids=AW-11453388766~AW-17925177963&fmt=8",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/products/macbook-air-13-m3-chip-2024-8c-cpu-8c-gpu-8gb-256gb-ssd-midnight",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://analytics.google.com/g/collect?v=2&tid=G-WTB4027LZ7&gtm=45je69n1v9118944950za200zb9174372991zd9174372991xf1&_p=1790452399872&gcd=13l3l3l3l1l1&npa=0&dma=0&gdid=dN2ZkMj.dMWZhNz&_eu=AgAAAGQC&cid=1420067880.1790452395&frm=0&pscdl=noapi&rcb=19&sr=1440x900&uaa=x86&uab=64&uafvl=HeadlessChrome%3B153.0.8010.12%7CNot_A%2520Brand%3B8.0.0.0%7CChromium%3B153.0.8010.12&uam=&uamb=0&uap=Linux&uapv=&uaw=0&ul=en-us&gaf=2&_s=1&tag_exp=115616985~115938465~115938469~118897920~118897930~120213116~120385422~120469145~120469153~121280969&sid=1790452394&sct=1&seg=1&dl=https%3A%2F%2Ftradelinestores.com%2Fproducts%2Fmacbook-air-13-m3-chip-2024-8c-cpu-8c-gpu-8gb-256gb-ssd-midnight&dt=404%20Not%20Found%20%E2%80%93%20TradelineStores&en=page_view&_ee=1&tfd=647",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/products/macbook-air-13-m3-chip-2024-8c-cpu-8c-gpu-8gb-256gb-ssd-midnight",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://sessions.bugsnag.com/",
+    "method": "POST",
+    "resource_type": "xhr",
+    "headers": {
+      "bugsnag-payload-version": "1.0",
+      "bugsnag-api-key": "a51246d2a1f718541183be260c6215bd",
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/products/macbook-air-13-m3-chip-2024-8c-cpu-8c-gpu-8gb-256gb-ssd-midnight",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "sec-ch-ua-mobile": "?0",
+      "bugsnag-sent-at": "2026-09-26T19:53:20.090Z",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "content-type": "application/json"
+    }
+  },
+  {
+    "url": "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true",
+    "method": "GET",
+    "resource_type": "xhr",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/products/macbook-air-13-m3-chip-2024-8c-cpu-8c-gpu-8gb-256gb-ssd-midnight",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://tradelinestores.com/cart.js",
+    "method": "GET",
+    "resource_type": "xhr",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/products/macbook-air-13-m3-chip-2024-8c-cpu-8c-gpu-8gb-256gb-ssd-midnight",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "sec-ch-ua-mobile": "?0",
+      "x-requested-with": "XMLHttpRequest",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "accept": "application/json, text/javascript, */*; q=0.01",
+      "sec-ch-viewport-width": "1440"
+    }
+  },
+  {
+    "url": "https://otlp-http-production.shopifysvc.com/v1/metrics",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/products/macbook-air-13-m3-chip-2024-8c-cpu-8c-gpu-8gb-256gb-ssd-midnight",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "content-type": "application/json",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://consentcdn.cookiebot.com/consentconfig/73b870e0-a752-4b9a-9655-1e0babb6301d/settings.json",
+    "method": "GET",
+    "resource_type": "xhr",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/pages/store-locator",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://otlp-http-production.shopifysvc.com/v1/metrics",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/pages/store-locator",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "content-type": "application/json",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://www.google.com/rmkt/collect/11453388766/?random=1790452402634&cv=11&fst=1790452402634&fmt=8&bg=ffffff&guid=ON&async=1&en=gtag.config&gtm=45be69n1v9174372991za200zd9174372991xecxf1&gcd=13l3l3l3l1l1&dma=0&tag_exp=115616986~115938466~115938469~118897920~118897930~120213116~120385422~120469145~120469153~121191154~121280969&u_w=1440&u_h=900&url=https%3A%2F%2Ftradelinestores.com%2Fpages%2Fstore-locator&rcb=2&frm=0&tiba=Store%20Locator%20%E2%80%93%20TradelineStores&did=dN2ZkMj&gdid=dN2ZkMj&hn=www.googleadservices.com&npa=0&us_privacy=1YNY&pscdl=noapi&auid=1579204645.1790452395&data=event%3Dgtag.config&ept=68&gcp=5",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/pages/store-locator",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://www.google.com/rmkt/collect/17925177963/?random=1790452402643&cv=11&fst=1790452402643&fmt=8&bg=ffffff&guid=ON&async=1&en=gtag.config&gtm=45be69n1v9174372991za200zd9174372991xecxf1&gcd=13l3l3l3l1l1&dma=0&tag_exp=115616986~115938466~115938469~118897920~118897930~120213116~120385422~120469145~120469153~121191154~121280969&u_w=1440&u_h=900&url=https%3A%2F%2Ftradelinestores.com%2Fpages%2Fstore-locator&rcb=2&frm=0&tiba=Store%20Locator%20%E2%80%93%20TradelineStores&did=dN2ZkMj&gdid=dN2ZkMj&hn=www.googleadservices.com&npa=0&us_privacy=1YNY&pscdl=noapi&auid=1579204645.1790452395&data=event%3Dgtag.config&ept=68&gcp=5",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/pages/store-locator",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://www.google.com/ccm/collect?rcb=2&frm=0&apvc=1&auid=1579204645.1790452395&dt=Store%20Locator%20%E2%80%93%20TradelineStores&tid=AW-11453388766&en=page_view&dl=https%3A%2F%2Ftradelinestores.com%2Fpages%2Fstore-locator&scrsrc=www.googletagmanager.com&rnd=755664435.1790452403&navt=n&npa=0&us_privacy=1YNY&did=dN2ZkMj&gdid=dN2ZkMj&gtm=45be69n1v9174372991za200zd9174372991xecxf1&gcd=13l3l3l3l1l1&dma=0&tag_exp=115616986~115938466~115938469~118897920~118897930~120213116~120385422~120469145~120469153~121191154~121280969&tft=1790452402650&tfd=545&tids=AW-11453388766~AW-17925177963&fmt=8",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/pages/store-locator",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://analytics.google.com/g/collect?v=2&tid=G-VGQQNNXQ19&gtm=45be69n1v9174372991za200zd9174372991xf1&_p=1790452402559&gcd=13l3l3l3l1l1&npa=0&dma=0&gdid=dN2ZkMj.dMWZhNz&_eu=AAAAACQC&cid=1420067880.1790452395&frm=0&ibt=1&ngs=1&pscdl=noapi&rcb=2&sr=1440x900&uaa=x86&uab=64&uafvl=HeadlessChrome%3B153.0.8010.12%7CNot_A%2520Brand%3B8.0.0.0%7CChromium%3B153.0.8010.12&uam=&uamb=0&uap=Linux&uapv=&uaw=0&ul=en-us&_s=1&tag_exp=115616986~115938466~115938469~118897920~118897930~120213116~120385422~120469145~120469153~121191154~121280969&sid=1790452394&sct=1&seg=1&dl=https%3A%2F%2Ftradelinestores.com%2Fpages%2Fstore-locator&dt=Store%20Locator%20%E2%80%93%20TradelineStores&en=page_view&_ee=1&tfd=563",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/pages/store-locator",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://analytics.google.com/g/collect?v=2&tid=G-WTB4027LZ7&gtm=45je69n1v9118944950za200zb9174372991zd9174372991xf1&_p=1790452402559&gcd=13l3l3l3l1l1&npa=0&dma=0&gdid=dN2ZkMj.dMWZhNz&_eu=AAAAAGQC&cid=1420067880.1790452395&frm=0&pscdl=noapi&rcb=4&sr=1440x900&uaa=x86&uab=64&uafvl=HeadlessChrome%3B153.0.8010.12%7CNot_A%2520Brand%3B8.0.0.0%7CChromium%3B153.0.8010.12&uam=&uamb=0&uap=Linux&uapv=&uaw=0&ul=en-us&gaf=2&_s=1&tag_exp=115938466~115938469~118897920~118897930~120213116~120385423~120469145~120469153~121280969&sid=1790452394&sct=1&seg=1&dl=https%3A%2F%2Ftradelinestores.com%2Fpages%2Fstore-locator&dt=Store%20Locator%20%E2%80%93%20TradelineStores&en=page_view&_ee=1&tfd=594",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/pages/store-locator",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://otlp-http-production.shopifysvc.com/v1/metrics",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/pages/store-locator",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "content-type": "application/json",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://tradelinestores.com/pages/store-locator?section_id=sections--18658975744066__header",
+    "method": "GET",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/pages/store-locator",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "sec-ch-viewport-width": "1440",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://tradelinestores.com/pages/store-locator?section_id=sections--18658975744066__header",
+    "method": "GET",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/pages/store-locator",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "sec-ch-viewport-width": "1440",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://tradelinestores.com/api/collect",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/pages/store-locator",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "content-type": "application/json",
+      "sec-ch-viewport-width": "1440",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://ugjbcd-yt.myshopify.com/api/2024-07/graphql.json",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/pages/store-locator",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "content-type": "application/json",
+      "x-shopify-storefront-access-token": "bb33f586312a3c47ebed094384207b2f",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://otlp-http-production.shopifysvc.com/v1/metrics",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/pages/store-locator",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "content-type": "application/json",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://otlp-http-production.shopifysvc.com/v1/logs",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/pages/store-locator",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "content-type": "application/json",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://tradelinestores.com/pages/store-locator?section_id=sections--18658975744066__header",
+    "method": "GET",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/pages/store-locator",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "sec-ch-viewport-width": "1440",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://sessions.bugsnag.com/",
+    "method": "POST",
+    "resource_type": "xhr",
+    "headers": {
+      "bugsnag-payload-version": "1.0",
+      "bugsnag-api-key": "a51246d2a1f718541183be260c6215bd",
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/pages/store-locator",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "sec-ch-ua-mobile": "?0",
+      "bugsnag-sent-at": "2026-09-26T19:53:23.984Z",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "content-type": "application/json"
+    }
+  },
+  {
+    "url": "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true",
+    "method": "GET",
+    "resource_type": "xhr",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/pages/store-locator",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://maps.googleapis.com/$rpc/google.internal.maps.mapsjs.v1.MapsJsInternalService/GetViewportInfo",
+    "method": "POST",
+    "resource_type": "xhr",
+    "headers": {
+      "x-goog-maps-api-signature": "28583",
+      "sec-ch-ua-platform": "\"Linux\"",
+      "x-user-agent": "grpc-web-javascript/0.1",
+      "referer": "https://tradelinestores.com/pages/store-locator",
+      "x-goog-gmp-client-signals": "CAIqBzMuNjYuNmNaDRILCLTF4NUGEIDw52o=",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "sec-ch-ua-mobile": "?0",
+      "x-goog-api-key": "AIzaSyDQRTQWhZBtRsJxpgWyAB95E9UARA4Q25s",
+      "x-goog-maps-api-salt": "zB6wGyqS0",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "content-type": "application/json+protobuf",
+      "x-goog-maps-session-id": "C97AD5F2-8C44-4C51-9ABC-2E211CAF449B"
+    }
+  },
+  {
+    "url": "https://tradelinestores.com/cart.js",
+    "method": "GET",
+    "resource_type": "xhr",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/pages/store-locator",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "sec-ch-ua-mobile": "?0",
+      "x-requested-with": "XMLHttpRequest",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "accept": "application/json, text/javascript, */*; q=0.01",
+      "sec-ch-viewport-width": "1440"
+    }
+  },
+  {
+    "url": "https://maps.googleapis.com/$rpc/google.internal.maps.mapsjs.v1.MapsJsInternalService/GetViewportInfo",
+    "method": "POST",
+    "resource_type": "xhr",
+    "headers": {
+      "x-goog-maps-api-signature": "28583",
+      "sec-ch-ua-platform": "\"Linux\"",
+      "x-user-agent": "grpc-web-javascript/0.1",
+      "referer": "https://tradelinestores.com/pages/store-locator",
+      "x-goog-gmp-client-signals": "CAIqBzMuNjYuNmNaDhIMCLTF4NUGEID56uUB",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "sec-ch-ua-mobile": "?0",
+      "x-goog-api-key": "AIzaSyDQRTQWhZBtRsJxpgWyAB95E9UARA4Q25s",
+      "x-goog-maps-api-salt": "zB6wGyqS0",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "content-type": "application/json+protobuf",
+      "x-goog-maps-session-id": "C97AD5F2-8C44-4C51-9ABC-2E211CAF449B"
+    }
+  },
+  {
+    "url": "https://otlp-http-production.shopifysvc.com/v1/metrics",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://tradelinestores.com/pages/store-locator",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "content-type": "application/json",
+      "sec-ch-ua-mobile": "?0"
+    }
+  },
+  {
+    "url": "https://maps.googleapis.com/$rpc/google.internal.maps.mapsjs.v1.MapsJsInternalService/GetViewportInfo",
+    "method": "POST",
+    "resource_type": "xhr",
+    "headers": {
+      "x-goog-maps-api-signature": "28583",
+      "sec-ch-ua-platform": "\"Linux\"",
+      "x-user-agent": "grpc-web-javascript/0.1",
+      "referer": "https://tradelinestores.com/pages/store-locator",
+      "x-goog-gmp-client-signals": "CAIqBzMuNjYuNmNaDhIMCLXF4NUGEMDX7O8B",
+      "sec-ch-ua": "\"HeadlessChrome\";v=\"153\", \"Not_A Brand\";v=\"8\", \"Chromium\";v=\"153\"",
+      "sec-ch-ua-mobile": "?0",
+      "x-goog-api-key": "AIzaSyDQRTQWhZBtRsJxpgWyAB95E9UARA4Q25s",
+      "x-goog-maps-api-salt": "zB6wGyqS0",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 EgyptEcommerceResearchBot/1.0",
+      "content-type": "application/json+protobuf",
+      "x-goog-maps-session-id": "C97AD5F2-8C44-4C51-9ABC-2E211CAF449B"
+    }
+  }
+]

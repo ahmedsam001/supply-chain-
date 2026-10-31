@@ -1,0 +1,75 @@
+{
+  "version": 1,
+  "description": "Persisted deterministic product watchlist per source so repeated runs observe the same items.",
+  "default_limit": 10,
+  "min_limit": 5,
+  "max_limit": 20,
+  "sources": {
+    "jumia": {
+      "category_urls": [
+        "https://www.jumia.com.eg/phones-tablets/"
+      ],
+      "watched_source_product_ids": [
+        "135151551",
+        "135151552",
+        "135151553",
+        "135151554",
+        "135151555",
+        "135151556"
+      ],
+      "max_pages": 1,
+      "default_limit": 6
+    },
+    "two_b": {
+      "category_urls": [
+        "https://2b.com.eg/en/computers/laptops.html"
+      ],
+      "watched_source_product_ids": [
+        "47535",
+        "41708",
+        "49053",
+        "49051",
+        "48752",
+        "47354",
+        "10101",
+        "10102"
+      ],
+      "max_pages": 1,
+      "default_limit": 6
+    },
+    "tradeline": {
+      "watched_source_product_ids": [
+        "8413231087682",
+        "8411009712194"
+      ],
+      "max_pages": 1,
+      "default_limit": 10
+    },
+    "dream2000": {
+      "watched_source_product_ids": [
+        "8255329501323",
+        "8459590140043"
+      ],
+      "max_pages": 1,
+      "default_limit": 10
+    },
+    "carrefour": {
+      "watched_source_product_ids": [
+        "CRF-EG-10001",
+        "CRF-EG-10002",
+        "CRF-EG-10003"
+      ],
+      "max_pages": 1,
+      "default_limit": 10
+    },
+    "raya": {
+      "watched_source_product_ids": [
+        "20201",
+        "20202"
+      ],
+      "max_pages": 1,
+      "default_limit": 10
+    }
+  },
+  "watchlist_id": "watchlist_v1"
+}

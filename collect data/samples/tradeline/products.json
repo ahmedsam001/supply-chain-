@@ -1,0 +1,58 @@
+[
+  {
+    "product_id": "deb0d3a9-c968-44fd-ad88-d8bd9dc549e4",
+    "source_id": "tradeline",
+    "source_product_id": "8413231087682",
+    "sku": "MQEY3LL/A",
+    "product_name": "Apple iPhone 16 Pro 128GB - Black Titanium",
+    "brand": "Apple",
+    "category": "iPhone",
+    "subcategory": null,
+    "product_url": "https://www.tradelinestores.com/products/apple-iphone-16-pro-128gb-black-titanium",
+    "image_url": "https://cdn.shopify.com/s/files/1/0647/8000/9538/files/iphone16pro.png",
+    "specifications": null,
+    "gtin": null,
+    "raw_category_path": null,
+    "source_url": "https://www.tradelinestores.com/products/apple-iphone-16-pro-128gb-black-titanium",
+    "collected_at": "2026-09-28T15:08:45.295029Z",
+    "variants": [
+      {
+        "variant_id": "44001234567890",
+        "title": "Default Title",
+        "sku": "MQEY3LL/A",
+        "price": "54999.00",
+        "compare_at_price": null,
+        "available": true
+      }
+    ],
+    "run_id": "sample_tradeline_20260928"
+  },
+  {
+    "product_id": "1e346b75-86f8-4d40-a15a-0b15d25664b0",
+    "source_id": "tradeline",
+    "source_product_id": "8411009712194",
+    "sku": "MTJV3LL/A",
+    "product_name": "Apple AirPods Pro 2nd Generation with MagSafe Case (USB-C)",
+    "brand": "Apple",
+    "category": "AirPods",
+    "subcategory": null,
+    "product_url": "https://www.tradelinestores.com/products/apple-airpods-pro-2nd-generation-usb-c",
+    "image_url": "https://cdn.shopify.com/s/files/1/0647/8000/9538/files/airpodspro.png",
+    "specifications": null,
+    "gtin": null,
+    "raw_category_path": null,
+    "source_url": "https://www.tradelinestores.com/products/apple-airpods-pro-2nd-generation-usb-c",
+    "collected_at": "2026-09-28T15:08:45.295029Z",
+    "variants": [
+      {
+        "variant_id": "44001234567891",
+        "title": "Default Title",
+        "sku": "MTJV3LL/A",
+        "price": "8999.00",
+        "compare_at_price": "10999.00",
+        "available": true
+      }
+    ],
+    "run_id": "sample_tradeline_20260928"
+  }
+]

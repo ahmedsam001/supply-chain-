@@ -1,0 +1,1103 @@
+sources:
+  jumia:
+    source_id: jumia
+    source_name: Jumia Egypt
+    domain: jumia.com.eg
+    official_url: https://www.jumia.com.eg/
+    business_type: marketplace
+    research_status: VERIFIED/PARTIAL
+    compliance_status: B
+    implementation_status: PROTOTYPE
+    extraction_method: static_html
+    enabled: true
+    reason: controlled_prototype
+    capabilities:
+      products: true
+      pricing: true
+      availability: true
+      stock_quantity: false
+      seller: true
+      branches: false
+      gps: false
+      delivery_zones: true
+      location_specific_inventory: false
+      warehouse_data: false
+    access:
+      method: static_html
+      api: false
+      json: false
+      html: true
+      json_ld: true
+      browser_required: false
+    rate_limit:
+      requests_per_minute: 30
+    delay:
+      min_seconds: 1.5
+      max_seconds: 3.5
+    notes: 'LIVE PENDING HUMAN TOS CONFIRMATION: robots.txt verified (allows catalog/PDP under 200 RPM,
+      disallows /mobapi/), but Jumia Terms of Use (Section 10.9.9 & 10.9.10, retrieved 2026-09-28 from
+      /fragment/contents/sp-terms-of-use/?lang=en) prohibit systematic or automated data collection/scraping
+      without express written consent. robots.txt does NOT override Terms of Use. Enabled only for controlled
+      research smoke validation pending human legal sign-off.'
+    evidence:
+      evidence_url: https://www.jumia.com.eg/robots.txt
+      captured_on: '2026-09-28'
+      summary: 'ROBOTS VERIFIED (2026-09-28, HTTP 200, 9825 bytes, allows catalog/PDP under 200 RPM, disallows
+        /mobapi/). TOS RETRIEVED AND READ (2026-09-28, /fragment/contents/sp-terms-of-use/?lang=en): Section
+        10.9.9 prohibits systematic or automated data collection (scraping, data mining, data extraction,
+        data harvesting) without express written consent; Section 10.9.10 prohibits robots/spiders except
+        search engine indexing. robots.txt does NOT override ToS. Status: LIVE PENDING HUMAN TOS CONFIRMATION.'
+      decided_by: pending_human_tos_confirmation
+      proposed_classification: LIVE PENDING HUMAN TOS CONFIRMATION (Class B prototype; requires written
+        consent for production)
+      tos_url: https://www.jumia.com.eg/terms-of-use/?internal=footer
+      tos_iframe_url: https://www.jumia.com.eg/fragment/contents/sp-terms-of-use/?lang=en
+      raw_tos_snapshot: data/raw/jumia/terms_fragment_2026-09-28.html
+      robots_status: ROBOTS VERIFIED
+      tos_status: TOS RETRIEVED AND READ
+      authorization_status: LIVE PENDING HUMAN TOS CONFIRMATION
+      human_signoff_required: true
+    evidence_url: https://www.jumia.com.eg/robots.txt
+    evidence_captured_on: '2026-09-28'
+    evidence_summary: 'ROBOTS VERIFIED (2026-09-28, HTTP 200, 9825 bytes, allows catalog/PDP under 200
+      RPM, disallows /mobapi/). TOS RETRIEVED AND READ (2026-09-28, /fragment/contents/sp-terms-of-use/?lang=en):
+      Section 10.9.9 prohibits systematic or automated data collection (scraping, data mining, data extraction,
+      data harvesting) without express written consent; Section 10.9.10 prohibits robots/spiders except
+      search engine indexing. robots.txt does NOT override ToS. Status: LIVE PENDING HUMAN TOS CONFIRMATION.'
+    evidence_decided_by: pending_human_tos_confirmation
+    seeds:
+      max_pages: 1
+      default_limit: 6
+      category_urls:
+      - https://www.jumia.com.eg/phones-tablets/
+      product_urls:
+      - https://www.jumia.com.eg/apple-iphone-18-pro-256gb-8gb-ram-desert-titanium-132456789.html
+      skus:
+      - AP848MP1WRW29NAFAMZ
+      - AP848MP18M7ZDNAFAMZ
+      - AP848MP1JG3FDNAFAMZ
+  carrefour:
+    source_id: carrefour
+    source_name: Carrefour Egypt
+    domain: carrefouregypt.com
+    official_url: https://www.carrefouregypt.com/
+    business_type: hypermarket
+    research_status: VERIFIED/PARTIAL
+    compliance_status: D
+    implementation_status: PROTOTYPE
+    extraction_method: static_html
+    enabled: false
+    reason: compliance_unverified
+    capabilities:
+      products: true
+      pricing: true
+      availability: true
+      stock_quantity: false
+      seller: false
+      branches: true
+      gps: false
+      delivery_zones: unknown
+      location_specific_inventory: false
+      warehouse_data: false
+    access:
+      method: static_html
+      api: false
+      json: false
+      html: true
+      json_ld: false
+      browser_required: false
+    rate_limit:
+      requests_per_minute: 15
+    delay:
+      min_seconds: 2.5
+      max_seconds: 5.0
+    notes: 'Gated: do not automate until gate resolved. Only N left is treated as LOW_STOCK_SIGNAL.'
+    evidence:
+      evidence_url: https://www.carrefouregypt.com/robots.txt
+      captured_on: '2026-09-28'
+      summary: 'Read-only robots.txt check (HTTP 200, 1521 bytes): Disallow /cart, /*checkout. Public
+        store pages exist, but MAF ToS requires human legal sign-off before live automation.'
+      decided_by: pending_human_review
+      proposed_classification: Candidate for Class B (pending ToS review; enabled remains false)
+      robots_status: ROBOTS VERIFIED
+      tos_status: TOS NOT RETRIEVED
+      authorization_status: HUMAN SIGN-OFF REQUIRED
+      human_signoff_required: true
+    evidence_url: https://www.carrefouregypt.com/robots.txt
+    evidence_captured_on: '2026-09-28'
+    evidence_summary: 'Read-only robots.txt check (HTTP 200, 1521 bytes): Disallow /cart, /*checkout.
+      Public store pages exist, but MAF ToS requires human legal sign-off before live automation.'
+    evidence_decided_by: pending_human_review
+    seeds:
+      max_pages: 1
+      default_limit: 10
+      category_urls: []
+      product_urls: []
+      skus:
+      - CRF-EG-10001
+      - CRF-EG-10002
+      - CRF-EG-10003
+  btech:
+    source_id: btech
+    source_name: B.TECH
+    domain: btech.com
+    official_url: https://btech.com/
+    business_type: retailer
+    research_status: VERIFIED
+    compliance_status: C
+    implementation_status: BLOCKED
+    extraction_method: public_json
+    enabled: false
+    reason: prohibited
+    capabilities:
+      products: true
+      pricing: true
+      availability: true
+      stock_quantity: false
+      seller: true
+      branches: true
+      gps: false
+      delivery_zones: true
+      location_specific_inventory: false
+      warehouse_data: false
+    access:
+      method: public_json
+      api: false
+      json: true
+      html: true
+      json_ld: true
+      browser_required: false
+    notes: 'BLOCKED: Terms explicitly prohibit scraping, robots, and automated data extraction without
+      permission.'
+    evidence:
+      evidence_url: https://btech.com/en/terms-and-conditions
+      captured_on: '2026-09-27'
+      summary: B.TECH Terms & Conditions explicitly prohibit automated scraping, bots, and data extraction.
+        Hard-blocked in config and code.
+      decided_by: compliance_gate_blocked
+      proposed_classification: Class C (DO NOT AUTOMATE - Blocked)
+      robots_status: ROBOTS VERIFIED
+      tos_status: TOS RETRIEVED AND READ
+      authorization_status: BLOCKED (PROHIBITED BY TOS)
+      human_signoff_required: true
+    evidence_url: https://btech.com/en/terms-and-conditions
+    evidence_captured_on: '2026-09-27'
+    evidence_summary: B.TECH Terms & Conditions explicitly prohibit automated scraping, bots, and data
+      extraction. Hard-blocked in config and code.
+    evidence_decided_by: compliance_gate_blocked
+  two_b:
+    source_id: two_b
+    source_name: 2B Egypt
+    domain: 2b.com.eg
+    official_url: https://2b.com.eg/
+    business_type: retailer
+    research_status: STRONG
+    compliance_status: B
+    implementation_status: PROTOTYPE
+    extraction_method: static_html
+    enabled: true
+    reason: controlled_prototype
+    capabilities:
+      products: true
+      pricing: true
+      availability: true
+      stock_quantity: false
+      seller: false
+      branches: true
+      gps: true
+      delivery_zones: true
+      location_specific_inventory: false
+      warehouse_data: false
+    access:
+      method: static_html
+      api: false
+      json: false
+      html: true
+      json_ld: true
+      browser_required: false
+    rate_limit:
+      requests_per_minute: 6
+    delay:
+      min_seconds: 5.0
+      max_seconds: 12.0
+    notes: 'LIVE PENDING HUMAN TOS CONFIRMATION: robots.txt verified (Crawl-delay: 10s; allows catalog/PDP
+      and /en/stores). 2B Terms & Conditions (https://2b.com.eg/en/terms-and-conditions, retrieved 2026-09-28)
+      grant a license for personal shopping and prohibit commercial use or use on behalf of any third
+      party without advance permission. robots.txt does NOT override ToS. Enabled only for controlled
+      6 RPM research validation pending human legal sign-off.'
+    evidence:
+      evidence_url: https://2b.com.eg/robots.txt
+      captured_on: '2026-09-28'
+      summary: 'ROBOTS VERIFIED (2026-09-28, HTTP 200, 2600 bytes, Crawl-delay: 10s, allows catalog/PDP
+        and /en/stores). TOS RETRIEVED AND READ (2026-09-28, https://2b.com.eg/en/terms-and-conditions):
+        ''Use of the Site'' grants a personal shopping license and prohibits commercial use without advance
+        permission; contains no explicit anti-scraping clause for non-commercial research. Status: LIVE
+        PENDING HUMAN TOS CONFIRMATION.'
+      decided_by: pending_human_tos_confirmation
+      proposed_classification: LIVE PENDING HUMAN TOS CONFIRMATION (Class B prototype at <=6 RPM; requires
+        human sign-off for commercial use)
+      tos_url: https://2b.com.eg/en/terms-and-conditions
+      raw_tos_snapshot: data/raw/two_b/terms_2026-09-28.html
+      robots_status: ROBOTS VERIFIED
+      tos_status: TOS RETRIEVED AND READ
+      authorization_status: LIVE PENDING HUMAN TOS CONFIRMATION
+      human_signoff_required: true
+    evidence_url: https://2b.com.eg/robots.txt
+    evidence_captured_on: '2026-09-28'
+    evidence_summary: 'ROBOTS VERIFIED (2026-09-28, HTTP 200, 2600 bytes, Crawl-delay: 10s, allows catalog/PDP
+      and /en/stores). TOS RETRIEVED AND READ (2026-09-28, https://2b.com.eg/en/terms-and-conditions):
+      ''Use of the Site'' grants a personal shopping license and prohibits commercial use without advance
+      permission; contains no explicit anti-scraping clause for non-commercial research. Status: LIVE
+      PENDING HUMAN TOS CONFIRMATION.'
+    evidence_decided_by: pending_human_tos_confirmation
+    seeds:
+      max_pages: 1
+      default_limit: 6
+      category_urls:
+      - https://2b.com.eg/en/computers/laptops.html
+      product_urls: []
+      skus:
+      - '35356'
+      - '35355'
+      - '35354'
+  tradeline:
+    source_id: tradeline
+    source_name: Tradeline Stores
+    domain: tradelinestores.com
+    official_url: https://www.tradelinestores.com/
+    business_type: retailer
+    research_status: STRONG/PARTIAL
+    compliance_status: D
+    implementation_status: PROTOTYPE
+    extraction_method: public_json
+    enabled: false
+    reason: compliance_unverified
+    capabilities:
+      products: true
+      pricing: true
+      availability: true
+      stock_quantity: false
+      seller: false
+      branches: true
+      gps: true
+      delivery_zones: true
+      location_specific_inventory: false
+      warehouse_data: false
+    access:
+      method: public_json
+      api: true
+      json: true
+      html: true
+      json_ld: false
+      browser_required: false
+    rate_limit:
+      requests_per_minute: 20
+    delay:
+      min_seconds: 2.0
+      max_seconds: 4.0
+    notes: Shopify /products.json public endpoint + store locator. 30 branches with GPS across 7 derived
+      governorates.
+    evidence:
+      evidence_url: https://www.tradelinestores.com/robots.txt
+      captured_on: '2026-09-28'
+      summary: 'Read-only robots.txt check (HTTP 200, 3644 bytes): standard Shopify robots.txt (Allow:
+        /, Disallow: /admin, /cart, /checkout). Public /products.json and store locator exist; awaiting
+        human sign-off.'
+      decided_by: pending_human_review
+      proposed_classification: Candidate for Class B (proposal only; enabled remains false)
+      robots_status: ROBOTS VERIFIED
+      tos_status: TOS NOT RETRIEVED
+      authorization_status: HUMAN SIGN-OFF REQUIRED
+      human_signoff_required: true
+    evidence_url: https://www.tradelinestores.com/robots.txt
+    evidence_captured_on: '2026-09-28'
+    evidence_summary: 'Read-only robots.txt check (HTTP 200, 3644 bytes): standard Shopify robots.txt
+      (Allow: /, Disallow: /admin, /cart, /checkout). Public /products.json and store locator exist; awaiting
+      human sign-off.'
+    evidence_decided_by: pending_human_review
+    seeds:
+      max_pages: 1
+      default_limit: 10
+      category_urls: []
+      product_urls: []
+      skus:
+      - MQEY3LL/A
+      - MTJV3LL/A
+  dream2000:
+    source_id: dream2000
+    source_name: Dream 2000
+    domain: dream2000.com
+    official_url: https://dream2000.com/
+    business_type: retailer
+    research_status: STRONG
+    compliance_status: D
+    implementation_status: PROTOTYPE
+    extraction_method: public_json
+    enabled: false
+    reason: compliance_unverified
+    capabilities:
+      products: true
+      pricing: true
+      availability: true
+      stock_quantity: false
+      seller: false
+      branches: true
+      gps: false
+      delivery_zones: true
+      location_specific_inventory: true
+      warehouse_data: false
+    access:
+      method: public_json
+      api: true
+      json: true
+      html: true
+      json_ld: false
+      browser_required: false
+    rate_limit:
+      requests_per_minute: 20
+    delay:
+      min_seconds: 2.0
+      max_seconds: 4.0
+    notes: Shopify store with pickup availability signals. Gated controlled prototype.
+    evidence:
+      evidence_url: https://dream2000.com/robots.txt
+      captured_on: '2026-09-28'
+      summary: 'Read-only robots.txt check (HTTP 200, 3620 bytes): standard Shopify robots.txt (Allow:
+        /). Public /products.json exposes EAN-13 GTINs; awaiting human ToS sign-off.'
+      decided_by: pending_human_review
+      proposed_classification: Candidate for Class B (proposal only; enabled remains false)
+      robots_status: ROBOTS VERIFIED
+      tos_status: TOS NOT RETRIEVED
+      authorization_status: HUMAN SIGN-OFF REQUIRED
+      human_signoff_required: true
+    evidence_url: https://dream2000.com/robots.txt
+    evidence_captured_on: '2026-09-28'
+    evidence_summary: 'Read-only robots.txt check (HTTP 200, 3620 bytes): standard Shopify robots.txt
+      (Allow: /). Public /products.json exposes EAN-13 GTINs; awaiting human ToS sign-off.'
+    evidence_decided_by: pending_human_review
+    seeds:
+      max_pages: 1
+      default_limit: 10
+      category_urls: []
+      product_urls: []
+      skus:
+      - '6942785106048'
+      - '6223019370191'
+  raya:
+    source_id: raya
+    source_name: Raya Shop
+    domain: rayashop.com
+    official_url: https://www.rayashop.com/
+    business_type: retailer
+    research_status: STRONG
+    compliance_status: D
+    implementation_status: PROTOTYPE
+    extraction_method: static_html
+    enabled: false
+    reason: compliance_unverified
+    capabilities:
+      products: true
+      pricing: true
+      availability: true
+      stock_quantity: false
+      seller: true
+      branches: true
+      gps: false
+      delivery_zones: true
+      location_specific_inventory: true
+      warehouse_data: false
+    access:
+      method: static_html
+      api: false
+      json: false
+      html: true
+      json_ld: true
+      browser_required: false
+    rate_limit:
+      requests_per_minute: 10
+    delay:
+      min_seconds: 3.0
+      max_seconds: 6.0
+    notes: Magento 2 platform with Pickup from Store signals. Gated controlled prototype.
+    evidence:
+      evidence_url: https://www.rayashop.com/robots.txt
+      captured_on: '2026-09-28'
+      summary: 'Read-only robots.txt check (HTTP 200, 1396 bytes): Disallow /ar/checkout/, /en/checkout/,
+        /customer/. Terms of Use not yet cleared by human reviewer; offline synthetic fixture only.'
+      decided_by: pending_human_review
+      proposed_classification: Candidate for Class B (proposal only; enabled remains false)
+      robots_status: ROBOTS VERIFIED
+      tos_status: TOS NOT RETRIEVED
+      authorization_status: HUMAN SIGN-OFF REQUIRED
+      human_signoff_required: true
+    evidence_url: https://www.rayashop.com/robots.txt
+    evidence_captured_on: '2026-09-28'
+    evidence_summary: 'Read-only robots.txt check (HTTP 200, 1396 bytes): Disallow /ar/checkout/, /en/checkout/,
+      /customer/. Terms of Use not yet cleared by human reviewer; offline synthetic fixture only.'
+    evidence_decided_by: pending_human_review
+    seeds:
+      max_pages: 1
+      default_limit: 10
+      category_urls: []
+      product_urls: []
+      skus:
+      - SM-A556BLBDMID
+      - 55UT80006LA
+  noon:
+    source_id: noon
+    source_name: Noon Egypt
+    domain: noon.com
+    official_url: https://www.noon.com/egypt-en/
+    business_type: marketplace
+    research_status: PARTIAL/STRONG
+    compliance_status: D
+    implementation_status: DEFERRED
+    extraction_method: static_html
+    enabled: false
+    reason: compliance_unverified
+    capabilities:
+      products: true
+      pricing: true
+      availability: true
+      stock_quantity: false
+      seller: true
+      branches: false
+      gps: false
+      delivery_zones: true
+      location_specific_inventory: false
+      warehouse_data: false
+    access:
+      method: static_html
+      api: false
+      json: false
+      html: true
+      json_ld: true
+      browser_required: true
+    notes: 'Gated: Marketplace offers and multiple sellers. Gate before automation.'
+    evidence:
+      evidence_url: https://www.noon.com/robots.txt
+      captured_on: '2026-09-28'
+      summary: 'Read-only robots.txt check (HTTP 200, 269 bytes): Disallow /_svc/, /_vs/. Protected by
+        anti-bot WAF and restrictive ToS.'
+      decided_by: pending_human_review
+      proposed_classification: Needs permission / official partner API (enabled remains false)
+      robots_status: ROBOTS VERIFIED
+      tos_status: TOS NOT RETRIEVED
+      authorization_status: HUMAN SIGN-OFF REQUIRED
+      human_signoff_required: true
+    evidence_url: https://www.noon.com/robots.txt
+    evidence_captured_on: '2026-09-28'
+    evidence_summary: 'Read-only robots.txt check (HTTP 200, 269 bytes): Disallow /_svc/, /_vs/. Protected
+      by anti-bot WAF and restrictive ToS.'
+    evidence_decided_by: pending_human_review
+  spinneys:
+    source_id: spinneys
+    source_name: Spinneys Egypt
+    domain: spinneys-egypt.com
+    official_url: https://spinneys-egypt.com/
+    business_type: supermarket
+    research_status: STRONG/PARTIAL
+    compliance_status: D
+    implementation_status: DEFERRED
+    extraction_method: static_html
+    enabled: false
+    reason: compliance_unverified
+    capabilities:
+      products: true
+      pricing: true
+      availability: true
+      stock_quantity: false
+      seller: false
+      branches: true
+      gps: false
+      delivery_zones: unknown
+      location_specific_inventory: false
+      warehouse_data: false
+    access:
+      method: static_html
+      api: false
+      json: false
+      html: true
+      json_ld: false
+      browser_required: false
+    notes: Online grocery platform with branch presence. Gated pending compliance review.
+    evidence:
+      evidence_url: https://spinneys-egypt.com/robots.txt
+      captured_on: '2026-09-28'
+      summary: 'Read-only robots.txt check (HTTP 200, 144 bytes): User-agent: * Disallow: (empty). Grocery
+        category candidate, pending human ToS review.'
+      decided_by: pending_human_review
+      proposed_classification: Candidate for Class B (proposal only; enabled remains false)
+      robots_status: ROBOTS VERIFIED
+      tos_status: TOS NOT RETRIEVED
+      authorization_status: HUMAN SIGN-OFF REQUIRED
+      human_signoff_required: true
+    evidence_url: https://spinneys-egypt.com/robots.txt
+    evidence_captured_on: '2026-09-28'
+    evidence_summary: 'Read-only robots.txt check (HTTP 200, 144 bytes): User-agent: * Disallow: (empty).
+      Grocery category candidate, pending human ToS review.'
+    evidence_decided_by: pending_human_review
+  samsung_eg:
+    source_id: samsung_eg
+    source_name: Samsung Egypt
+    domain: samsung.com/eg
+    official_url: https://www.samsung.com/eg/
+    business_type: manufacturer_brand
+    research_status: STRONG/PARTIAL
+    compliance_status: D
+    implementation_status: DEFERRED
+    extraction_method: static_html
+    enabled: false
+    reason: compliance_unverified
+    capabilities:
+      products: true
+      pricing: true
+      availability: true
+      stock_quantity: false
+      seller: false
+      branches: true
+      gps: false
+      delivery_zones: unknown
+      location_specific_inventory: false
+      warehouse_data: false
+    access:
+      method: static_html
+      api: false
+      json: false
+      html: true
+      json_ld: true
+      browser_required: false
+    notes: Official brand catalog and store locator. Store presence != branch stock.
+    evidence:
+      evidence_url: https://www.samsung.com/robots.txt
+      captured_on: '2026-09-28'
+      summary: 'Read-only robots.txt check (HTTP 200, 10085 bytes): Disallow search/account/checkout paths.
+        Global Samsung ToS restricts automated scraping without written permission.'
+      decided_by: pending_human_review
+      proposed_classification: Needs permission (enabled remains false)
+      robots_status: ROBOTS VERIFIED
+      tos_status: TOS NOT RETRIEVED
+      authorization_status: HUMAN SIGN-OFF REQUIRED
+      human_signoff_required: true
+    evidence_url: https://www.samsung.com/robots.txt
+    evidence_captured_on: '2026-09-28'
+    evidence_summary: 'Read-only robots.txt check (HTTP 200, 10085 bytes): Disallow search/account/checkout
+      paths. Global Samsung ToS restricts automated scraping without written permission.'
+    evidence_decided_by: pending_human_review
+  orange_eg:
+    source_id: orange_eg
+    source_name: Orange Egypt
+    domain: shop.orange.eg
+    official_url: https://shop.orange.eg/
+    business_type: telecom
+    research_status: STRONG/PARTIAL
+    compliance_status: D
+    implementation_status: DEFERRED
+    extraction_method: static_html
+    enabled: false
+    reason: compliance_unverified
+    capabilities:
+      products: true
+      pricing: true
+      availability: true
+      stock_quantity: false
+      seller: false
+      branches: true
+      gps: false
+      delivery_zones: true
+      location_specific_inventory: false
+      warehouse_data: false
+    access:
+      method: static_html
+      api: false
+      json: false
+      html: true
+      json_ld: false
+      browser_required: false
+    notes: E-shop and store locator. Branch stock is unverified. Compliance gate required.
+    evidence:
+      evidence_url: https://www.orange.eg/robots.txt
+      captured_on: '2026-09-28'
+      summary: Read-only check returned HTTP 404 (no robots.txt at root). Telecom device shop requires
+        explicit legal review.
+      decided_by: pending_human_review
+      proposed_classification: Still deferred / needs permission (enabled remains false)
+      robots_status: ASSUMED / UNVERIFIED
+      tos_status: TOS NOT RETRIEVED
+      authorization_status: HUMAN SIGN-OFF REQUIRED
+      human_signoff_required: true
+    evidence_url: https://www.orange.eg/robots.txt
+    evidence_captured_on: '2026-09-28'
+    evidence_summary: Read-only check returned HTTP 404 (no robots.txt at root). Telecom device shop requires
+      explicit legal review.
+    evidence_decided_by: pending_human_review
+  vodafone_eg:
+    source_id: vodafone_eg
+    source_name: Vodafone Egypt
+    domain: web.vodafone.com.eg
+    official_url: https://web.vodafone.com.eg/
+    business_type: telecom
+    research_status: PARTIAL
+    compliance_status: D
+    implementation_status: DEFERRED
+    extraction_method: static_html
+    enabled: false
+    reason: compliance_unverified
+    capabilities:
+      products: true
+      pricing: true
+      availability: true
+      stock_quantity: false
+      seller: false
+      branches: true
+      gps: false
+      delivery_zones: unknown
+      location_specific_inventory: false
+      warehouse_data: false
+    access:
+      method: static_html
+      api: false
+      json: false
+      html: true
+      json_ld: false
+      browser_required: false
+    notes: Telecom e-shop and store locator. Exact stock and branch inventory unknown.
+    evidence:
+      evidence_url: https://web.vodafone.com.eg/robots.txt
+      captured_on: '2026-09-28'
+      summary: 'Read-only robots.txt check (HTTP 200, 452 bytes): User-agent: * Allow: /, blocks AI bots
+        (OAI-SearchBot, GPTBot). Requires telecom legal review.'
+      decided_by: pending_human_review
+      proposed_classification: Needs permission (enabled remains false)
+      robots_status: ROBOTS VERIFIED
+      tos_status: TOS NOT RETRIEVED
+      authorization_status: HUMAN SIGN-OFF REQUIRED
+      human_signoff_required: true
+    evidence_url: https://web.vodafone.com.eg/robots.txt
+    evidence_captured_on: '2026-09-28'
+    evidence_summary: 'Read-only robots.txt check (HTTP 200, 452 bytes): User-agent: * Allow: /, blocks
+      AI bots (OAI-SearchBot, GPTBot). Requires telecom legal review.'
+    evidence_decided_by: pending_human_review
+  we_eg:
+    source_id: we_eg
+    source_name: WE / Telecom Egypt
+    domain: te.eg
+    official_url: https://www.te.eg/
+    business_type: telecom
+    research_status: PARTIAL
+    compliance_status: D
+    implementation_status: DEFERRED
+    extraction_method: static_html
+    enabled: false
+    reason: compliance_unverified
+    capabilities:
+      products: true
+      pricing: true
+      availability: true
+      stock_quantity: false
+      seller: false
+      branches: true
+      gps: false
+      delivery_zones: unknown
+      location_specific_inventory: false
+      warehouse_data: false
+    access:
+      method: static_html
+      api: false
+      json: false
+      html: true
+      json_ld: false
+      browser_required: false
+    notes: Telecom hardware and plans. Robots allowance != legal permission. Conservative gate.
+    evidence:
+      evidence_url: https://te.eg/robots.txt
+      captured_on: '2026-09-28'
+      summary: 'Read-only robots.txt check (HTTP 200, 23 bytes): User-Agent: * Disallow:. Limited e-commerce
+        catalog; deferred.'
+      decided_by: pending_human_review
+      proposed_classification: Still deferred (enabled remains false)
+      robots_status: ROBOTS VERIFIED
+      tos_status: TOS NOT RETRIEVED
+      authorization_status: HUMAN SIGN-OFF REQUIRED
+      human_signoff_required: true
+    evidence_url: https://te.eg/robots.txt
+    evidence_captured_on: '2026-09-28'
+    evidence_summary: 'Read-only robots.txt check (HTTP 200, 23 bytes): User-Agent: * Disallow:. Limited
+      e-commerce catalog; deferred.'
+    evidence_decided_by: pending_human_review
+  eand_eg:
+    source_id: eand_eg
+    source_name: e& Egypt
+    domain: eand.com.eg
+    official_url: https://www.eand.com.eg/
+    business_type: telecom
+    research_status: PARTIAL
+    compliance_status: D
+    implementation_status: DEFERRED
+    extraction_method: static_html
+    enabled: false
+    reason: compliance_unverified
+    capabilities:
+      products: true
+      pricing: true
+      availability: true
+      stock_quantity: false
+      seller: false
+      branches: true
+      gps: false
+      delivery_zones: unknown
+      location_specific_inventory: false
+      warehouse_data: false
+    access:
+      method: static_html
+      api: false
+      json: false
+      html: true
+      json_ld: false
+      browser_required: false
+    notes: Telecom devices and network. Branch stock and public extraction API unverified.
+    evidence:
+      evidence_url: https://www.eand.com.eg/robots.txt
+      captured_on: '2026-09-28'
+      summary: 'Read-only robots.txt check (HTTP 200, 4122 bytes UTF-16LE): Disallow /StaticFiles/css,
+        portal paths. Telecom portal; deferred.'
+      decided_by: pending_human_review
+      proposed_classification: Still deferred / needs permission (enabled remains false)
+      robots_status: ROBOTS VERIFIED
+      tos_status: TOS NOT RETRIEVED
+      authorization_status: HUMAN SIGN-OFF REQUIRED
+      human_signoff_required: true
+    evidence_url: https://www.eand.com.eg/robots.txt
+    evidence_captured_on: '2026-09-28'
+    evidence_summary: 'Read-only robots.txt check (HTTP 200, 4122 bytes UTF-16LE): Disallow /StaticFiles/css,
+      portal paths. Telecom portal; deferred.'
+    evidence_decided_by: pending_human_review
+  metro:
+    source_id: metro
+    source_name: Metro Markets
+    domain: metro-markets.com
+    official_url: https://www.metro-markets.com/
+    business_type: supermarket
+    research_status: UNKNOWN/PARTIAL
+    compliance_status: D
+    implementation_status: DEFERRED
+    extraction_method: static_html
+    enabled: false
+    reason: research_required
+    capabilities:
+      products: unknown
+      pricing: unknown
+      availability: unknown
+      stock_quantity: false
+      seller: false
+      branches: true
+      gps: false
+      delivery_zones: unknown
+      location_specific_inventory: false
+      warehouse_data: false
+    access:
+      method: static_html
+      api: false
+      json: false
+      html: true
+      json_ld: false
+      browser_required: false
+    notes: 'Research required: structured catalog, prices, and public API not established.'
+    evidence:
+      evidence_url: https://www.metro-markets.com/robots.txt
+      captured_on: '2026-09-28'
+      summary: 'Read-only robots.txt check (HTTP 200, 24 bytes): User-agent: * Disallow:. Supermarket
+        catalog structure and ToS require human review.'
+      decided_by: pending_human_review
+      proposed_classification: Still deferred (enabled remains false)
+      robots_status: ROBOTS VERIFIED
+      tos_status: TOS NOT RETRIEVED
+      authorization_status: HUMAN SIGN-OFF REQUIRED
+      human_signoff_required: true
+    evidence_url: https://www.metro-markets.com/robots.txt
+    evidence_captured_on: '2026-09-28'
+    evidence_summary: 'Read-only robots.txt check (HTTP 200, 24 bytes): User-agent: * Disallow:. Supermarket
+      catalog structure and ToS require human review.'
+    evidence_decided_by: pending_human_review
+  hyperone:
+    source_id: hyperone
+    source_name: Hyper One
+    domain: hyperone.com.eg
+    official_url: https://www.hyperone.com.eg/
+    business_type: hypermarket
+    research_status: UNKNOWN
+    compliance_status: D
+    implementation_status: DEFERRED
+    extraction_method: static_html
+    enabled: false
+    reason: research_required
+    capabilities:
+      products: unknown
+      pricing: unknown
+      availability: unknown
+      stock_quantity: false
+      seller: false
+      branches: unknown
+      gps: false
+      delivery_zones: unknown
+      location_specific_inventory: false
+      warehouse_data: false
+    access:
+      method: static_html
+      api: false
+      json: false
+      html: true
+      json_ld: false
+      browser_required: false
+    notes: 'Research required: insufficient technical evidence.'
+    evidence:
+      evidence_url: https://www.hyperone.com.eg/robots.txt
+      captured_on: '2026-09-28'
+      summary: Read-only robots.txt check returned HTTP 403 Forbidden (WAF blocks automated HTTP clients).
+        Do not evade WAF.
+      decided_by: pending_human_review
+      proposed_classification: Needs permission / blocked by WAF (enabled remains false)
+      robots_status: ASSUMED / UNVERIFIED
+      tos_status: TOS NOT RETRIEVED
+      authorization_status: HUMAN SIGN-OFF REQUIRED
+      human_signoff_required: true
+    evidence_url: https://www.hyperone.com.eg/robots.txt
+    evidence_captured_on: '2026-09-28'
+    evidence_summary: Read-only robots.txt check returned HTTP 403 Forbidden (WAF blocks automated HTTP
+      clients). Do not evade WAF.
+    evidence_decided_by: pending_human_review
+  elaraby:
+    source_id: elaraby
+    source_name: Elaraby Group
+    domain: elarabygroup.com
+    official_url: https://www.elarabygroup.com/
+    business_type: manufacturer_retailer
+    research_status: PARTIAL
+    compliance_status: D
+    implementation_status: DEFERRED
+    extraction_method: static_html
+    enabled: false
+    reason: research_required
+    capabilities:
+      products: true
+      pricing: true
+      availability: true
+      stock_quantity: false
+      seller: false
+      branches: unknown
+      gps: false
+      delivery_zones: unknown
+      location_specific_inventory: false
+      warehouse_data: false
+    access:
+      method: static_html
+      api: false
+      json: false
+      html: true
+      json_ld: false
+      browser_required: false
+    notes: Products distributed through retail channels. Standalone technical access unverified.
+    evidence:
+      evidence_url: https://www.elarabygroup.com/robots.txt
+      captured_on: '2026-09-28'
+      summary: 'Read-only robots.txt check (HTTP 200, 1000 bytes): explicitly lists Googlebot/Googlebot-image;
+        general bot policy requires human ToS review.'
+      decided_by: pending_human_review
+      proposed_classification: Candidate for Class B after ToS review (enabled remains false)
+      robots_status: ROBOTS VERIFIED
+      tos_status: TOS NOT RETRIEVED
+      authorization_status: HUMAN SIGN-OFF REQUIRED
+      human_signoff_required: true
+    evidence_url: https://www.elarabygroup.com/robots.txt
+    evidence_captured_on: '2026-09-28'
+    evidence_summary: 'Read-only robots.txt check (HTTP 200, 1000 bytes): explicitly lists Googlebot/Googlebot-image;
+      general bot policy requires human ToS review.'
+    evidence_decided_by: pending_human_review
+  amazon_eg:
+    source_id: amazon_eg
+    source_name: Amazon Egypt
+    domain: amazon.eg
+    official_url: https://www.amazon.eg/
+    business_type: marketplace
+    research_status: RESTRICTED
+    compliance_status: C
+    implementation_status: BLOCKED
+    extraction_method: static_html
+    enabled: false
+    reason: prohibited
+    capabilities:
+      products: true
+      pricing: true
+      availability: true
+      stock_quantity: false
+      seller: true
+      branches: false
+      gps: false
+      delivery_zones: true
+      location_specific_inventory: false
+      warehouse_data: false
+    access:
+      method: static_html
+      api: false
+      json: false
+      html: true
+      json_ld: true
+      browser_required: true
+    notes: 'BLOCKED: Conditions of Use prohibit data mining, robots, or automated data extraction.'
+    evidence:
+      evidence_url: https://www.amazon.eg/gp/help/customer/display.html?nodeId=201909000
+      captured_on: '2026-09-27'
+      summary: Amazon Conditions of Use strictly prohibit data mining, robots, or similar data gathering
+        and extraction tools. Only official Amazon PA-API 5.0 with approved credentials is acceptable.
+      decided_by: compliance_gate_blocked
+      proposed_classification: Class C (DO NOT AUTOMATE without official API credentials - Blocked)
+      robots_status: ROBOTS VERIFIED
+      tos_status: TOS RETRIEVED AND READ
+      authorization_status: BLOCKED (PROHIBITED BY TOS)
+      human_signoff_required: true
+    evidence_url: https://www.amazon.eg/gp/help/customer/display.html?nodeId=201909000
+    evidence_captured_on: '2026-09-27'
+    evidence_summary: Amazon Conditions of Use strictly prohibit data mining, robots, or similar data
+      gathering and extraction tools. Only official Amazon PA-API 5.0 with approved credentials is acceptable.
+    evidence_decided_by: compliance_gate_blocked
+  talabat:
+    source_id: talabat
+    source_name: Talabat Mart / Talabat Egypt
+    domain: talabat.com/egypt
+    official_url: https://www.talabat.com/egypt
+    business_type: quick_commerce
+    research_status: CANDIDATE
+    compliance_status: D
+    implementation_status: DEFERRED
+    extraction_method: static_html
+    enabled: false
+    reason: research_required
+    capabilities:
+      products: true
+      pricing: true
+      availability: true
+      stock_quantity: false
+      seller: true
+      branches: unknown
+      gps: false
+      delivery_zones: true
+      location_specific_inventory: true
+      warehouse_data: false
+    access:
+      method: static_html
+      api: false
+      json: false
+      html: true
+      json_ld: false
+      browser_required: true
+    notes: Quick-commerce dark stores and delivery areas. Automated-access permission unverified.
+    evidence:
+      evidence_url: https://www.talabat.com/robots.txt
+      captured_on: '2026-09-28'
+      summary: 'Read-only robots.txt check (HTTP 200, 126 bytes): Sitemap links only. Quick-commerce inventory
+        requires location session/API; requires partner permission.'
+      decided_by: pending_human_review
+      proposed_classification: Needs permission (enabled remains false)
+      robots_status: ROBOTS VERIFIED
+      tos_status: TOS NOT RETRIEVED
+      authorization_status: HUMAN SIGN-OFF REQUIRED
+      human_signoff_required: true
+    evidence_url: https://www.talabat.com/robots.txt
+    evidence_captured_on: '2026-09-28'
+    evidence_summary: 'Read-only robots.txt check (HTTP 200, 126 bytes): Sitemap links only. Quick-commerce
+      inventory requires location session/API; requires partner permission.'
+    evidence_decided_by: pending_human_review
+  instashop:
+    source_id: instashop
+    source_name: InstaShop Egypt
+    domain: instashop.com/en-eg
+    official_url: https://instashop.com/en-eg
+    business_type: quick_commerce
+    research_status: CANDIDATE
+    compliance_status: D
+    implementation_status: DEFERRED
+    extraction_method: static_html
+    enabled: false
+    reason: research_required
+    capabilities:
+      products: true
+      pricing: true
+      availability: true
+      stock_quantity: false
+      seller: true
+      branches: unknown
+      gps: false
+      delivery_zones: true
+      location_specific_inventory: true
+      warehouse_data: false
+    access:
+      method: static_html
+      api: false
+      json: false
+      html: true
+      json_ld: false
+      browser_required: true
+    notes: Candidate source for local grocery and retailers. Research further before implementation.
+    evidence:
+      evidence_url: https://instashop.com/robots.txt
+      captured_on: '2026-09-28'
+      summary: 'Read-only robots.txt check (HTTP 200, 2518 bytes): User-agent: * Allow: /, Disallow: /my-orders/*.
+        Quick-commerce platform requires ToS review.'
+      decided_by: pending_human_review
+      proposed_classification: Needs permission (enabled remains false)
+      robots_status: ROBOTS VERIFIED
+      tos_status: TOS NOT RETRIEVED
+      authorization_status: HUMAN SIGN-OFF REQUIRED
+      human_signoff_required: true
+    evidence_url: https://instashop.com/robots.txt
+    evidence_captured_on: '2026-09-28'
+    evidence_summary: 'Read-only robots.txt check (HTTP 200, 2518 bytes): User-agent: * Allow: /, Disallow:
+      /my-orders/*. Quick-commerce platform requires ToS review.'
+    evidence_decided_by: pending_human_review
+  lulu:
+    source_id: lulu
+    source_name: Lulu Hypermarket Egypt
+    domain: luluhypermarket.com/en-eg
+    official_url: https://www.luluhypermarket.com/en-eg
+    business_type: hypermarket
+    research_status: CANDIDATE
+    compliance_status: D
+    implementation_status: DEFERRED
+    extraction_method: static_html
+    enabled: false
+    reason: research_required
+    capabilities:
+      products: true
+      pricing: true
+      availability: true
+      stock_quantity: false
+      seller: false
+      branches: true
+      gps: false
+      delivery_zones: unknown
+      location_specific_inventory: false
+      warehouse_data: false
+    access:
+      method: static_html
+      api: false
+      json: false
+      html: true
+      json_ld: false
+      browser_required: false
+    notes: Candidate source for hypermarket physical footprint and catalog. Compliance unverified.
+    evidence:
+      evidence_url: https://www.luluhypermarket.com/robots.txt
+      captured_on: '2026-09-28'
+      summary: Read-only robots.txt check timed out (ReadTimeout / edge protection). Deferred until human
+        verification.
+      decided_by: pending_human_review
+      proposed_classification: Still deferred (enabled remains false)
+      robots_status: ASSUMED / UNVERIFIED
+      tos_status: TOS NOT RETRIEVED
+      authorization_status: HUMAN SIGN-OFF REQUIRED
+      human_signoff_required: true
+    evidence_url: https://www.luluhypermarket.com/robots.txt
+    evidence_captured_on: '2026-09-28'
+    evidence_summary: Read-only robots.txt check timed out (ReadTimeout / edge protection). Deferred until
+      human verification.
+    evidence_decided_by: pending_human_review

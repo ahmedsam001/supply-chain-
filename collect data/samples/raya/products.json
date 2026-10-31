@@ -1,0 +1,40 @@
+[
+  {
+    "product_id": "02a5bc83-80df-44ce-bd6d-5117f0fc06c9",
+    "source_id": "raya",
+    "source_product_id": "SM-A556BLBDMID",
+    "sku": "SM-A556BLBDMID",
+    "product_name": "Samsung Galaxy A55 5G - 128GB - 8GB RAM - Awesome Iceblue",
+    "brand": "Samsung",
+    "category": "Mobiles",
+    "subcategory": null,
+    "product_url": "https://www.rayashop.com/en/samsung-galaxy-a55-5g-128gb-awesome-iceblue.html",
+    "image_url": "https://www.rayashop.com/media/catalog/product/a/5/a55-iceblue.jpg",
+    "specifications": null,
+    "gtin": null,
+    "raw_category_path": null,
+    "source_url": "https://www.rayashop.com/en/samsung-galaxy-a55-5g-128gb-awesome-iceblue.html",
+    "collected_at": "2026-09-28T15:08:45.308980Z",
+    "variants": null,
+    "run_id": "sample_raya_20260928"
+  },
+  {
+    "product_id": "cb07d550-f3d5-4116-8390-6bde920e36de",
+    "source_id": "raya",
+    "source_product_id": "55UT80006LA",
+    "sku": "55UT80006LA",
+    "product_name": "LG 55 Inch 4K UHD Smart TV with Magic Remote - 55UT80006LA",
+    "brand": "LG",
+    "category": "TVs",
+    "subcategory": null,
+    "product_url": "https://www.rayashop.com/en/lg-55-inch-4k-uhd-smart-tv.html",
+    "image_url": "https://www.rayashop.com/media/catalog/product/l/g/lg-55-tv.jpg",
+    "specifications": null,
+    "gtin": null,
+    "raw_category_path": null,
+    "source_url": "https://www.rayashop.com/en/lg-55-inch-4k-uhd-smart-tv.html",
+    "collected_at": "2026-09-28T15:08:45.308980Z",
+    "variants": null,
+    "run_id": "sample_raya_20260928"
+  }
+]

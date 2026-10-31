@@ -1,0 +1,40 @@
+{
+  "source": "jumia",
+  "source_id": "jumia",
+  "run_mode": "live",
+  "mode": "live",
+  "run_id": "live_repeat_run_2",
+  "watchlist_id": "watchlist_v1",
+  "retrieved_at": "2026-09-28T16:13:51.790228+00:00",
+  "collected_at": "2026-09-28T16:13:51.790228+00:00",
+  "source_url": "https://www.jumia.com.eg/phones-tablets/",
+  "record_count": {
+    "products": 6,
+    "observations": 6,
+    "locations": 27,
+    "total": 39
+  },
+  "products_count": 6,
+  "observations_count": 6,
+  "locations_count": 27,
+  "quality_issues_count": 12,
+  "quality_score": 86.21,
+  "overall_quality_score": 86.21,
+  "null_rates": {
+    "products": {
+      "product_name": 0.0,
+      "sku": 0.0,
+      "gtin": 1.0,
+      "brand": 0.0,
+      "category": 0.0,
+      "image_url": 0.0
+    },
+    "observations": {
+      "price": 0.0,
+      "old_price": 1.0,
+      "discount": 0.0,
+      "seller_name": 1.0,
+      "stock_quantity": 1.0
+    }
+  }
+}

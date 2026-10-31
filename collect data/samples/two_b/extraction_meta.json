@@ -1,0 +1,40 @@
+{
+  "source": "two_b",
+  "source_id": "two_b",
+  "run_mode": "live",
+  "mode": "live",
+  "run_id": "live_repeat_run_2",
+  "watchlist_id": "watchlist_v1",
+  "retrieved_at": "2026-09-28T16:14:05.035773+00:00",
+  "collected_at": "2026-09-28T16:14:05.035773+00:00",
+  "source_url": "https://2b.com.eg/en/computers/laptops.html",
+  "record_count": {
+    "products": 6,
+    "observations": 6,
+    "locations": 59,
+    "total": 71
+  },
+  "products_count": 6,
+  "observations_count": 6,
+  "locations_count": 59,
+  "quality_issues_count": 20,
+  "quality_score": 94.94,
+  "overall_quality_score": 94.94,
+  "null_rates": {
+    "products": {
+      "product_name": 0.0,
+      "sku": 1.0,
+      "gtin": 1.0,
+      "brand": 0.0,
+      "category": 0.0,
+      "image_url": 0.0
+    },
+    "observations": {
+      "price": 0.0,
+      "old_price": 0.0,
+      "discount": 0.0,
+      "seller_name": 1.0,
+      "stock_quantity": 1.0
+    }
+  }
+}

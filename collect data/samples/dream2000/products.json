@@ -1,0 +1,58 @@
+[
+  {
+    "product_id": "d80b5312-7571-4645-8429-aa08e278d167",
+    "source_id": "dream2000",
+    "source_product_id": "8255329501323",
+    "sku": "6942785106048",
+    "product_name": "هونر 600 5G بشرحتين مع سماعات X7e Active",
+    "brand": "Honor",
+    "category": "Smartphones",
+    "subcategory": null,
+    "product_url": "https://dream2000.com/products/honor-600-dual-sim-5g-golden-earbuds-x7e-active-cover",
+    "image_url": "https://cdn.shopify.com/s/files/1/0741/2557/4283/files/honor-600.jpg",
+    "specifications": null,
+    "gtin": "6942785106048",
+    "raw_category_path": null,
+    "source_url": "https://dream2000.com/products/honor-600-dual-sim-5g-golden-earbuds-x7e-active-cover",
+    "collected_at": "2026-09-28T15:08:45.302520Z",
+    "variants": [
+      {
+        "variant_id": "44110000000001",
+        "title": "Default Title",
+        "sku": "6942785106048",
+        "price": "29990.00",
+        "compare_at_price": "36000.00",
+        "available": true
+      }
+    ],
+    "run_id": "sample_dream2000_20260928"
+  },
+  {
+    "product_id": "248812db-95b2-4da1-a7b5-838c30193536",
+    "source_id": "dream2000",
+    "source_product_id": "8459590140043",
+    "sku": "6223019370191",
+    "product_name": "شاحن حائط Cardoo بقوة 45 وات PD بمنفذي USB-C وUSB-A – أبيض",
+    "brand": "Cardoo",
+    "category": "Chargers",
+    "subcategory": null,
+    "product_url": "https://dream2000.com/products/cardoo-45w-pd-usb-c-home-charger",
+    "image_url": "https://cdn.shopify.com/s/files/1/0741/2557/4283/files/cardoo-charger.jpg",
+    "specifications": null,
+    "gtin": "6223019370191",
+    "raw_category_path": null,
+    "source_url": "https://dream2000.com/products/cardoo-45w-pd-usb-c-home-charger",
+    "collected_at": "2026-09-28T15:08:45.302520Z",
+    "variants": [
+      {
+        "variant_id": "44110000000002",
+        "title": "Default Title",
+        "sku": "6223019370191",
+        "price": "650.00",
+        "compare_at_price": "850.00",
+        "available": true
+      }
+    ],
+    "run_id": "sample_dream2000_20260928"
+  }
+]

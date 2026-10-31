@@ -1,0 +1,44 @@
+{
+  "products": [
+    {
+      "id": 8413231087682,
+      "title": "Apple iPhone 16 Pro 128GB - Black Titanium",
+      "vendor": "Apple",
+      "product_type": "iPhone",
+      "handle": "apple-iphone-16-pro-128gb-black-titanium",
+      "body_html": "iPhone 16 Pro with A18 Pro chip",
+      "images": [{"src": "https://cdn.shopify.com/s/files/1/0647/8000/9538/files/iphone16pro.png"}],
+      "tags": ["apple", "iphone", "5g"],
+      "variants": [
+        {
+          "id": 44001234567890,
+          "sku": "MQEY3LL/A",
+          "price": "54999.00",
+          "compare_at_price": null,
+          "available": true,
+          "title": "Default Title"
+        }
+      ]
+    },
+    {
+      "id": 8411009712194,
+      "title": "Apple AirPods Pro 2nd Generation with MagSafe Case (USB-C)",
+      "vendor": "Apple",
+      "product_type": "AirPods",
+      "handle": "apple-airpods-pro-2nd-generation-usb-c",
+      "body_html": "AirPods Pro with Adaptive Audio",
+      "images": [{"src": "https://cdn.shopify.com/s/files/1/0647/8000/9538/files/airpodspro.png"}],
+      "tags": ["airpods", "apple", "wireless"],
+      "variants": [
+        {
+          "id": 44001234567891,
+          "sku": "MTJV3LL/A",
+          "price": "8999.00",
+          "compare_at_price": "10999.00",
+          "available": true,
+          "title": "Default Title"
+        }
+      ]
+    }
+  ]
+}

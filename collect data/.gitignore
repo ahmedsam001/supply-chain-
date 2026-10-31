@@ -1,0 +1,55 @@
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+
+# Environment files
+.env
+.env.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Large raw data dumps (keep structured samples)
+data/raw/
+data/bronze/
+data/silver/
+data/gold/
+data/departments/
+data/raw_snapshots/
+data/observation_history/
+data/manifests/
+
+# Logs & Databases
+logs/
+*.log
+*.duckdb
+*.duckdb.*
+*.duckdb.wal
+*.duckdb.tmp
+dwh/*.duckdb
+dwh/archive/
+airflow/
+audit_outputs/
+.system_generated/
+
+# Daily raw snapshots & large observation dumps
+data/raw_snapshots/
+data/observation_history/
+data/manifests/
+
+# OS
+.DS_Store
+Thumbs.db

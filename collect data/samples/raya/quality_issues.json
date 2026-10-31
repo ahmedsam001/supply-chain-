@@ -1,0 +1,54 @@
+[
+  {
+    "issue_id": "824ae068-6963-4faf-bd4d-d5c133987e63",
+    "run_id": "sample_raya_20260928",
+    "source_id": "raya",
+    "entity_type": "product",
+    "entity_id": "SM-A556BLBDMID",
+    "issue_code": "MISSING_FIELD",
+    "severity": "low",
+    "message": "Product SM-A556BLBDMID: missing GTIN",
+    "raw_value": null,
+    "source_url": "https://www.rayashop.com/en/samsung-galaxy-a55-5g-128gb-awesome-iceblue.html",
+    "detected_at": "2026-09-28T18:13:31.123290Z"
+  },
+  {
+    "issue_id": "c2b86530-f40b-45e1-9d11-983e78dc0064",
+    "run_id": "sample_raya_20260928",
+    "source_id": "raya",
+    "entity_type": "product",
+    "entity_id": "55UT80006LA",
+    "issue_code": "MISSING_FIELD",
+    "severity": "low",
+    "message": "Product 55UT80006LA: missing GTIN",
+    "raw_value": null,
+    "source_url": "https://www.rayashop.com/en/lg-55-inch-4k-uhd-smart-tv.html",
+    "detected_at": "2026-09-28T18:13:31.123318Z"
+  },
+  {
+    "issue_id": "7e91a20b-ccdb-476a-9130-3d7ab198f6cd",
+    "run_id": "sample_raya_20260928",
+    "source_id": "raya",
+    "entity_type": "observation",
+    "entity_id": "SM-A556BLBDMID",
+    "issue_code": "MISSING_FIELD",
+    "severity": "low",
+    "message": "Observation SM-A556BLBDMID: missing seller_name",
+    "raw_value": null,
+    "source_url": "https://www.rayashop.com/en/samsung-galaxy-a55-5g-128gb-awesome-iceblue.html",
+    "detected_at": "2026-09-28T18:13:31.123365Z"
+  },
+  {
+    "issue_id": "2d1ec842-aa97-41e4-98f7-c0f4896d039c",
+    "run_id": "sample_raya_20260928",
+    "source_id": "raya",
+    "entity_type": "observation",
+    "entity_id": "55UT80006LA",
+    "issue_code": "MISSING_FIELD",
+    "severity": "low",
+    "message": "Observation 55UT80006LA: missing seller_name",
+    "raw_value": null,
+    "source_url": "https://www.rayashop.com/en/lg-55-inch-4k-uhd-smart-tv.html",
+    "detected_at": "2026-09-28T18:13:31.123380Z"
+  }
+]
