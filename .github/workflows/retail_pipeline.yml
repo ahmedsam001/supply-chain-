@@ -1,0 +1,174 @@
+name: Retail Lakehouse Pipeline
+
+on:
+  schedule:
+    - cron: "0 * * * *"
+    - cron: "0 2 * * *"
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: Pipeline run mode
+        required: true
+        default: hourly
+        type: choice
+        options:
+          - hourly
+          - daily
+
+permissions:
+  contents: write
+
+concurrency:
+  group: retail-lakehouse-pipeline
+  cancel-in-progress: false
+
+jobs:
+  retail-pipeline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    defaults:
+      run:
+        working-directory: collect data
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: collect data/requirements.txt
+
+      - name: Install pipeline dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+          python -m playwright install chromium --with-deps
+
+      - name: Restore live DuckDB state
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p dwh
+          gh release download live-state \
+            --pattern "retail_lakehouse_fresh.duckdb" \
+            --dir dwh \
+            --clobber
+
+      - name: Determine mode and run pipeline
+        id: pipeline
+        run: |
+          if [[ "${{ github.event.schedule }}" == "0 2 * * *" || "${{ inputs.mode }}" == "daily" ]]; then
+            MODE="daily"
+          else
+            MODE="hourly"
+          fi
+          echo "mode=$MODE" >> "$GITHUB_OUTPUT"
+          echo "MODE=$MODE" >> "$GITHUB_ENV"
+
+          ERP_ORDERS_BEFORE="$(python - <<'PY'
+          from pathlib import Path
+          import duckdb
+
+          db = Path("dwh/retail_lakehouse_fresh.duckdb")
+          if not db.exists():
+              print(0)
+          else:
+              conn = duckdb.connect(str(db), read_only=True)
+              try:
+                  exists = conn.execute(
+                      """SELECT COUNT(*) FROM information_schema.tables
+                         WHERE table_schema = 'supply_chain_stage'
+                           AND table_name = 'RAW_CUSTOMER_ORDERS'"""
+                  ).fetchone()[0]
+                  print(conn.execute(
+                      "SELECT COUNT(*) FROM supply_chain_stage.RAW_CUSTOMER_ORDERS"
+                  ).fetchone()[0] if exists else 0)
+              finally:
+                  conn.close()
+          PY
+          )"
+          echo "ERP_ORDERS_BEFORE=$ERP_ORDERS_BEFORE" >> "$GITHUB_ENV"
+          python dwh/run_pipeline.py --mode "$MODE"
+
+      - name: Checkpoint DuckDB and write job summary
+        env:
+          PIPELINE_MODE: ${{ steps.pipeline.outputs.mode }}
+        run: |
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          import duckdb
+
+          db = Path("dwh/retail_lakehouse_fresh.duckdb")
+          if not db.exists():
+              raise SystemExit(f"Expected pipeline state at {db}")
+
+          conn = duckdb.connect(str(db))
+          try:
+              # Flush the WAL before the release asset is uploaded.
+              conn.execute("CHECKPOINT")
+
+              def scalar(sql, params=(), default=0):
+                  try:
+                      value = conn.execute(sql, params).fetchone()[0]
+                      return default if value is None else value
+                  except duckdb.CatalogException:
+                      return default
+
+              latest_run = conn.execute("""
+                  SELECT RUN_ID
+                  FROM live_market.RUN_LOGS
+                  ORDER BY FINISHED_AT DESC
+                  LIMIT 1
+              """).fetchone()
+              run_id = latest_run[0] if latest_run else "n/a"
+              products = scalar("SELECT COUNT(*) FROM live_market.PRODUCTS")
+              price_history = scalar("SELECT COUNT(*) FROM live_market.PRICE_HISTORY")
+              changed = scalar("""
+                  SELECT COALESCE(SUM(SNAPSHOTS_WRITTEN), 0)
+                  FROM live_market.RUN_LOGS WHERE RUN_ID = ?
+              """, (run_id,)) if latest_run else 0
+              unchanged = scalar("""
+                  SELECT COALESCE(SUM(PRODUCTS_UNCHANGED), 0)
+                  FROM live_market.RUN_LOGS WHERE RUN_ID = ?
+              """, (run_id,)) if latest_run else 0
+              erp_orders = scalar(
+                  "SELECT COUNT(*) FROM supply_chain_stage.RAW_CUSTOMER_ORDERS"
+              )
+              before = int(os.environ.get("ERP_ORDERS_BEFORE", "0"))
+              new_orders = max(erp_orders - before, 0)
+          finally:
+              conn.close()
+
+          summary = Path(os.environ["GITHUB_STEP_SUMMARY"])
+          summary.write_text(
+              "## Retail Lakehouse Pipeline\n\n"
+              f"Mode: `{os.environ['PIPELINE_MODE']}`  \\n"
+              f"Pipeline run: `{run_id}`\n\n"
+              "| Metric | Value |\n"
+              "| --- | ---: |\n"
+              f"| PRODUCTS | {products:,} |\n"
+              f"| PRICE_HISTORY rows | {price_history:,} |\n"
+              f"| Changed CDC snapshots (latest RUN_LOGS) | {changed:,} |\n"
+              f"| Unchanged CDC snapshots (latest RUN_LOGS) | {unchanged:,} |\n"
+              f"| RAW_CUSTOMER_ORDERS | {erp_orders:,} |\n"
+              f"| New ERP customer orders this run | {new_orders:,} |\n",
+              encoding="utf-8",
+          )
+          PY
+
+      - name: Persist live DuckDB state
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload live-state dwh/retail_lakehouse_fresh.duckdb --clobber
+
+      - name: Preserve Bronze Parquet output
+        uses: actions/upload-artifact@v4
+        with:
+          name: bronze-${{ github.run_number }}
+          path: collect data/data/local_bronze/
+          retention-days: 7
+          if-no-files-found: ignore
