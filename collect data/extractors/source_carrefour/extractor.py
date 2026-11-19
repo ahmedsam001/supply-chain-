@@ -190,6 +190,13 @@ class CarrefourExtractor(BaseExtractor):
                     soup = BeautifulSoup(html, "lxml")
 
                     links = soup.select('a[href*="/p/"]')
+                    if not links:
+                        logger.warning("carrefour.category.empty_retrying", category=cat_name, url=category_url)
+                        await page.wait_for_timeout(2500)
+                        await page.goto(category_url, timeout=40000, wait_until="domcontentloaded")
+                        await page.wait_for_timeout(3000)
+                        soup = BeautifulSoup(await page.content(), "lxml")
+                        links = soup.select('a[href*="/p/"]')
                     new_count = 0
                     for a in links:
                         href = a.get("href", "")

@@ -1,6 +1,6 @@
 # Egypt E-Commerce & Retail Supply Chain Intelligence Platform
 
-An enterprise-grade, end-to-end Data Engineering, Market Intelligence, and Supply Chain Platform for the Egyptian retail ecosystem. Built on **Apache Airflow**, **DuckDB**, and **Databricks Delta Lake** (Lakehouse architecture).
+A local-first Data Ingestion & Synthetic ERP Generation Engine for the Egyptian retail ecosystem. Live scraping of 6 retailers + hash-based CDC snapshots + category-aware synthetic ERP events, stored in **DuckDB** (`dwh/retail_lakehouse_fresh.duckdb`) and written as partitioned **Bronze Parquet** (`data/local_bronze/`), ready for a future GitHub Actions + Azure ADLS Gen2 hand-off. No Airflow, no cloud connectors.
 
 ---
 
@@ -8,22 +8,28 @@ An enterprise-grade, end-to-end Data Engineering, Market Intelligence, and Suppl
 
 This platform ingests, validates, normalizes, and models large-scale retail market data alongside internal enterprise supply chain (ERP) operations across Egypt:
 
-1. **Live Market Ingestion (`workspace.live_market`):**
-   - Continuously scrapes real-world price, discount, and availability metrics across 6 major Egyptian retailers: **Jumia Egypt**, **Carrefour Egypt**, **Tradeline Stores** (Apple Authorized Reseller), **Dream 2000**, **2B Egypt**, and **Raya Shop**.
+1. **Live Market Ingestion (`live_market`):**
+   - Continuously scrapes real-world price, discount, and availability metrics across major Egyptian retailers:
+     - Core Ingestion Sources: **Jumia Egypt** (`jumia`), **Carrefour Egypt** (`carrefour`), **Tradeline Stores** (`tradeline`, Apple Authorized Reseller), **Dream 2000** (`dream2000`), **2B Egypt** (`two_b`), and **Raya Shop** (`raya`).
+     - Registry & Monitored Sources: `btech`, `noon`, `spinneys`, `samsung_eg`, `orange_eg`, `vodafone_eg`, `we_eg`, `eand_eg`, `metro`, `hyperone`, `elaraby`, `amazon_eg`, `talabat`, `instashop`, `lulu`.
    - Captures **4,971 live products**, **4,971 historical price observations**, **250 physical store branches** across 27 Egyptian governorates, and **6 retailer entities**.
    - Features robust anti-ban protection: User-Agent header rotation, polite jitter, and automated Chromium/Playwright fallback to bypass Cloudflare JA3 TLS and rate-limit obstacles.
 
-2. **Supply Chain & ERP Stage (`workspace.supply_chain_stage`):**
+2. **Supply Chain & ERP Stage (`supply_chain_stage`):**
    - Synthesizes realistic, domain-accurate operational ERP data anchored directly to the 4,971 live products and 250 physical branches.
    - Organizes products into **10 Operational Supply Chain Archetypes** (ranging from high-ticket Apple Flagship and Computing to cold-chain agro-food and FMCG detergents).
    - Generates **8 RAW transactional tables** (**19,400+ records**) with realistic OLTP nuances (mixed timestamp formats, unstandardized Egyptian city/governorate spellings, mixed casing, and controlled webhook retry duplicates) providing a realistic data-cleaning foundation.
 
-3. **Dimensional Star Schema Target (`workspace.stage`):**
+3. **Dimensional Star Schema Target (`stage`):**
    - A dedicated staging layer reserved for downstream modeling into standard Conformed Dimensions (`DIM_PRODUCT`, `DIM_STORE`, `DIM_BRANCH`, `DIM_SUPPLIER`, `DIM_WAREHOUSE`, `DIM_DATE`) and Fact Tables (`FACT_SALES_ORDER_ITEMS`, `FACT_PROCUREMENT`, `FACT_INVENTORY_DAILY`, `FACT_SHIPMENTS`).
 
-4. **Unified Daily Orchestration (Apache Airflow):**
-   - A single orchestrated DAG (`egypt_ecommerce_etl`) in [`dags/egypt_ecommerce_dag.py`](dags/egypt_ecommerce_dag.py) that executes daily:
-     $$\text{Bootstrap Databricks} \longrightarrow \text{Scrape 6 Retailers in Parallel} \longrightarrow \text{Update Supply Chain Incremental Batch} \longrightarrow \text{Reconcile \& Audit Parity}$$
+4. **Local Runner (`dwh/run_pipeline.py`):**
+   - `--mode daily`: full catalog + branches scrape -> CDC snapshot -> baseline / daily ERP sync.
+   - `--mode hourly`: lightweight price/stock pulse -> CDC hash filter -> incremental hourly ERP events.
+   - `--loop --interval-minutes 60`: optional local scheduler loop (30 or 60 min typical).
+   - CDC (`dwh/cdc_snapshot.py`): SHA-256 `STATE_HASH` over `(PRODUCT_ID, CURRENT_PRICE, OLD_PRICE, DISCOUNT, STOCK_STATUS)`;
+     unchanged products only bump `PRODUCTS.LAST_CHECKED_AT`; new/changed products append one `PRICE_HISTORY` row
+     (`CHANGE_TYPE` = `INSERT`/`UPDATE`) and are the only rows written to `data/local_bronze/market_changes/`.
 
 ---
 
@@ -40,15 +46,15 @@ flowchart TD
         S6["Raya Shop"]
     end
 
-    subgraph Orchestration["Apache Airflow Engine (dags/egypt_ecommerce_dag.py)"]
-        A1["Task: bootstrap_databricks"]
-        A2["Tasks: scrape_[source] (Parallel x6)"]
-        A3["Task: update_supply_chain_stage"]
-        A4["Task: reconcile_and_audit"]
+    subgraph Orchestration["Local Runner (dwh/run_pipeline.py)"]
+        A2["Scrape 6 stores (daily: full + branches / hourly: pulse)"]
+        A1["Hash-based CDC (dwh/cdc_snapshot.py)"]
+        A3["Synthetic ERP sync (dwh/supply_chain_generator.py)"]
+        A4["Bronze Parquet (data/local_bronze/)"]
     end
 
     subgraph Storage["Storage & Lakehouse Layers"]
-        subgraph LiveMarket["Schema: workspace.live_market"]
+        subgraph LiveMarket["Schema: live_market"]
             T1["PRODUCTS (4,971 rows)"]
             T2["PRICE_HISTORY (4,971 rows)"]
             T3["BRANCHES (250 rows)"]
@@ -56,7 +62,7 @@ flowchart TD
             T5["RUN_LOGS"]
         end
 
-        subgraph SupplyChain["Schema: workspace.supply_chain_stage"]
+        subgraph SupplyChain["Schema: supply_chain_stage"]
             SC1["RAW_SUPPLIERS (12 rows)"]
             SC2["RAW_WAREHOUSES (6 rows)"]
             SC3["RAW_PURCHASE_ORDERS (483 rows)"]
@@ -67,7 +73,7 @@ flowchart TD
             SC8["RAW_SHIPMENTS (1,749 rows)"]
         end
 
-        subgraph StarSchema["Schema: workspace.stage (User Target)"]
+        subgraph StarSchema["Schema: stage (User Target)"]
             DIM1["DIM_PRODUCT"]
             DIM2["DIM_STORE & DIM_BRANCH"]
             DIM3["DIM_SUPPLIER"]
@@ -80,11 +86,11 @@ flowchart TD
     end
 
     Sources --> A2
-    A1 --> A2
-    A2 --> LiveMarket
-    A2 --> A3
+    A2 --> A1
+    A1 --> LiveMarket
     LiveMarket -.-> A3
     A3 --> SupplyChain
+    A1 --> A4
     A3 --> A4
     LiveMarket --> StarSchema
     SupplyChain --> StarSchema
@@ -94,7 +100,7 @@ flowchart TD
 
 ## 3. Data Model & Entity-Relationship Diagram (ERD)
 
-The diagram below maps all 13 operational tables across `workspace.live_market` and `workspace.supply_chain_stage`, illustrating how every operational order, shipment, purchase order, and inventory log anchors to the live product catalog and physical branch network:
+The diagram below maps all 13 operational tables across `live_market` and `supply_chain_stage`, illustrating how every operational order, shipment, purchase order, and inventory log anchors to the live product catalog and physical branch network:
 
 ```mermaid
 erDiagram
@@ -268,7 +274,7 @@ erDiagram
 
 ## 4. Table Catalog & Data Dictionary
 
-### 4.1 Schema: `workspace.live_market` (Scraped Retail Data)
+### 4.1 Schema: `live_market` (Scraped Retail Data)
 
 | Table Name | Live Count | Primary Key | Description |
 | :--- | :---: | :--- | :--- |
@@ -278,7 +284,7 @@ erDiagram
 | `BRANCHES` | **250** | `BRANCH_ID` | Physical store locations across 27 Egyptian governorates with geo-coordinates and city details. |
 | `RUN_LOGS` | **7+** | `RUN_ID` | Pipeline audit trail tracking collection durations, items parsed, and success status. |
 
-### 4.2 Schema: `workspace.supply_chain_stage` (Raw ERP Operational Data)
+### 4.2 Schema: `supply_chain_stage` (Raw ERP Operational Data)
 
 | Table Name | Live Count | Primary Key | Description |
 | :--- | :---: | :--- | :--- |
@@ -310,9 +316,9 @@ All 129 `(STORE, CATEGORY)` pairs map deterministically to one of 10 operational
 
 ---
 
-## 6. Raw Data Cleaning Checklist (Reference Spec for `workspace.stage`)
+## 6. Raw Data Cleaning Checklist (Reference Spec for `stage`)
 
-When building your Dimensional Star Schema in `workspace.stage`, resolve the following injected OLTP anomalies:
+When building your Dimensional Star Schema in `stage`, resolve the following injected OLTP anomalies:
 
 1. **Primary Key Deduplication:**
    - Use `ROW_NUMBER() OVER (PARTITION BY <PK> ORDER BY <TIMESTAMP> DESC) = 1` on:
@@ -336,15 +342,19 @@ When building your Dimensional Star Schema in `workspace.stage`, resolve the fol
 ## 7. CLI Quickstart & Execution
 
 ```bash
-# 1. Run live extraction for all stores (DuckDB + Databricks sync)
-.venv/bin/python3 dwh/pipeline.py --live --limit 1000
+# Daily: full scrape + branches + CDC + baseline/daily ERP sync
+.venv/bin/python3 dwh/run_pipeline.py --mode daily
 
-# 2. Run daily incremental supply chain sync (appends new orders, updates inventory & shipments)
-.venv/bin/python3 dwh/supply_chain_generator.py --incremental-daily
+# Hourly: price/stock pulse + CDC filter + hourly ERP events
+.venv/bin/python3 dwh/run_pipeline.py --mode hourly
 
-# 3. Trigger full Airflow DAG run
-.venv/bin/airflow dags trigger egypt_ecommerce_etl
+# Local scheduler (no Airflow): repeat every 30/60 minutes
+.venv/bin/python3 dwh/run_pipeline.py --mode hourly --loop --interval-minutes 60
 
-# 4. Check data quality, nulls, and parity across DuckDB and Databricks
-.venv/bin/python3 -c "from dags.egypt_ecommerce_dag import task_reconcile_and_audit; print(task_reconcile_and_audit())"
+# Fixture mode (no network) and capped runs for testing
+.venv/bin/python3 dwh/run_pipeline.py --mode daily --offline --limit 50
+.venv/bin/python3 dwh/run_pipeline.py --mode daily --limit 200
+
+# Tests
+.venv/bin/python3 -m pytest -q
 ```

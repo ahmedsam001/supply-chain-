@@ -242,18 +242,3 @@ class TestDWHPipelineAndViews:
             assert bad_str[1] is None
         finally:
             conn.close()
-
-    def test_databricks_export_dry_run_and_target_schema(self):
-        from dwh.export_to_databricks import DEFAULT_DB, export_to_databricks, load_databricks_config
-
-        cfg = load_databricks_config()
-        assert cfg["username"] == "by234DEPI"
-        assert cfg["password"] == "DEPI@234"
-        assert cfg["catalog"] == "hive_metastore"
-        assert cfg["schema"] == "default"
-
-        counts = export_to_databricks(duck_db=DEFAULT_DB, cfg=cfg, dry_run=True)
-        assert "dim_product" in counts
-        assert "fact_observation" in counts
-        assert counts["dim_product"] > 0
-

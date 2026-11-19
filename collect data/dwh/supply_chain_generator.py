@@ -3,9 +3,10 @@
 Supply Chain & ERP Raw Operational Data Generator (Phase 1 & Phase 2)
 =====================================================================
 Generates realistic, category-aware OLTP / ERP operational tables tied 100%
-to the 4,971 live products and 250 physical branches in `workspace.live_market`.
+to the live products and physical branches stored in the local DuckDB
+`live_market` schema (dwh/retail_lakehouse_fresh.duckdb).
 
-Target Schema: `workspace.supply_chain_stage`
+Target Schema: `supply_chain_stage` (local DuckDB) + local Bronze Parquet
 Tables:
   1. RAW_SUPPLIERS
   2. RAW_WAREHOUSES
@@ -18,7 +19,7 @@ Tables:
 
 Includes realistic raw OLTP nuances (mixed timestamp formats, unstandardized
 Egyptian city/governorate spellings, casing variations, and ~1.5% retry duplicates)
-so downstream Star Schema (`DIM_` / `FACT_`) transformations can be built in `workspace.stage`.
+so downstream Star Schema (`DIM_` / `FACT_`) transformations can be built later.
 """
 
 from __future__ import annotations
@@ -32,6 +33,16 @@ from pathlib import Path
 from typing import Any
 
 import duckdb
+import pandas as pd
+
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+
+
+def _resolve_db_path(db_path: str | Path) -> Path:
+    p = Path(db_path)
+    if not p.is_absolute():
+        p = PROJECT_ROOT / p
+    return p
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -492,15 +503,16 @@ def mess_up_city(gov: str | None, rng: random.Random) -> str:
 
 def apply_price_cap_to_qty(raw_qty: int, unit_price: float, rng: random.Random) -> int:
     """
-    Enforce price-cap guard across all archetypes:
-      - If UNIT_PRICE_EGP > 3000: cap customer order QUANTITY to 1 unit.
-      - If UNIT_PRICE_EGP > 500: cap customer order QUANTITY to 1-2 units.
+    Price-cap guard on basket quantities (business rule #2):
+      - UNIT_PRICE_EGP > 3000        -> max 1 unit
+      - 500 < UNIT_PRICE_EGP <= 3000 -> max 2 units
+      - UNIT_PRICE_EGP <= 500        -> max 10 units
     """
     if unit_price > 3000.0:
         return 1
     if unit_price > 500.0:
-        return min(raw_qty, rng.randint(1, 2))
-    return raw_qty
+        return min(raw_qty, rng.randint(1, 2), 2)
+    return min(raw_qty, 10)
 
 
 
@@ -508,66 +520,26 @@ def apply_price_cap_to_qty(raw_qty: int, unit_price: float, rng: random.Random) 
 # 4. Fetch Live Catalog & Branches
 # ─────────────────────────────────────────────────────────────────────────────
 
-def load_live_catalog_and_branches(use_databricks: bool = False) -> tuple[list[dict], list[dict]]:
-    """Load the 4,971 live products and 250 branches from Databricks or local DuckDB."""
-    if use_databricks:
-        from dwh.databricks_client import get_databricks_connection
-        with get_databricks_connection() as conn:
-            cur = conn.cursor()
-            cur.execute("""
-                SELECT STORE, PRODUCT_ID, PRODUCT_NAME, CATEGORY, BRAND,
-                       CURRENT_PRICE, OLD_PRICE, DISCOUNT, STOCK_STATUS
-                FROM workspace.live_market.PRODUCTS
-                ORDER BY STORE, PRODUCT_ID
-            """)
-            cols = [d[0] for d in cur.description]
-            products = [dict(zip(cols, row)) for row in cur.fetchall()]
-
-            cur.execute("""
-                SELECT BRANCH_ID, STORE, BRANCH_NAME, CITY, GOVERNORATE, LATITUDE, LONGITUDE
-                FROM workspace.live_market.BRANCHES
-                ORDER BY STORE, BRANCH_ID
-            """)
-            bcols = [d[0] for d in cur.description]
-            branches = [dict(zip(bcols, row)) for row in cur.fetchall()]
-            return products, branches
-
-    # Fast local DuckDB query with exact parity to workspace.live_market
-    duck = duckdb.connect("dwh/egypt_ecommerce.duckdb", read_only=True)
-    prods_raw = duck.execute("""
-        SELECT
-            p.source_id AS STORE,
-            p.product_id AS PRODUCT_ID,
-            p.product_name AS PRODUCT_NAME,
-            COALESCE(p.category, 'Uncategorized') AS CATEGORY,
-            p.brand AS BRAND,
-            o.price AS CURRENT_PRICE,
-            o.old_price AS OLD_PRICE,
-            o.discount AS DISCOUNT,
-            COALESCE(o.stock_status, 'IN_STOCK') AS STOCK_STATUS
-        FROM dim_product p
-        JOIN (
-            SELECT product_id, price, old_price, discount, stock_status,
-                   ROW_NUMBER() OVER (PARTITION BY product_id ORDER BY observed_at DESC) as rn
-            FROM fact_observation
-        ) o ON p.product_id = o.product_id AND o.rn = 1
-        WHERE o.price IS NOT NULL AND o.price > 0
-        ORDER BY p.source_id, p.product_id
+def load_live_catalog_and_branches(
+    conn: duckdb.DuckDBPyConnection,
+) -> tuple[list[dict], list[dict]]:
+    """Load live products (latest CDC state) and branches from local `live_market`."""
+    prods_raw = conn.execute("""
+        SELECT STORE, PRODUCT_ID, PRODUCT_NAME, COALESCE(CATEGORY, 'Uncategorized'), BRAND,
+               CURRENT_PRICE, OLD_PRICE, DISCOUNT, COALESCE(STOCK_STATUS, 'IN_STOCK')
+        FROM live_market.PRODUCTS
+        WHERE CURRENT_PRICE IS NOT NULL AND CURRENT_PRICE > 0
+        ORDER BY STORE, PRODUCT_ID
     """).fetchall()
-    pcols = ["STORE", "PRODUCT_ID", "PRODUCT_NAME", "CATEGORY", "BRAND", "CURRENT_PRICE", "OLD_PRICE", "DISCOUNT", "STOCK_STATUS"]
+    pcols = ["STORE", "PRODUCT_ID", "PRODUCT_NAME", "CATEGORY", "BRAND",
+             "CURRENT_PRICE", "OLD_PRICE", "DISCOUNT", "STOCK_STATUS"]
     products = [dict(zip(pcols, r)) for r in prods_raw]
 
-    branches_raw = duck.execute("""
-        SELECT
-            location_id AS BRANCH_ID,
-            source_id AS STORE,
-            COALESCE(branch_name, location_name) AS BRANCH_NAME,
-            COALESCE(city, 'Cairo') AS CITY,
-            COALESCE(governorate, 'Cairo') AS GOVERNORATE,
-            latitude AS LATITUDE,
-            longitude AS LONGITUDE
-        FROM dim_location
-        ORDER BY source_id, location_id
+    branches_raw = conn.execute("""
+        SELECT BRANCH_ID, STORE, BRANCH_NAME, COALESCE(CITY, 'Cairo'),
+               COALESCE(GOVERNORATE, 'Cairo'), LATITUDE, LONGITUDE
+        FROM live_market.BRANCHES
+        ORDER BY STORE, BRANCH_ID
     """).fetchall()
     bcols = ["BRANCH_ID", "STORE", "BRANCH_NAME", "CITY", "GOVERNORATE", "LATITUDE", "LONGITUDE"]
     branches = [dict(zip(bcols, r)) for r in branches_raw]
@@ -622,11 +594,17 @@ def generate_raw_supply_chain_tables(
     num_cust_orders_override: int | None = None,
     num_inv_products_override: int | None = None,
     base_now_override: datetime | None = None,
+    lookback_hours: int | None = None,
 ) -> dict[str, list[dict[str, Any]]]:
     """
     Generate realistic ERP & Supply Chain raw records tied to live products and branches.
-    Supports both initial baseline generation and daily incremental delta batches.
+    Supports initial baseline generation, daily deltas, and hourly deltas
+    (`lookback_hours` confines PO / order / inventory-snapshot timestamps to the last N hours).
     """
+    if not products:
+        raise ValueError("Cannot generate ERP data: live_market.PRODUCTS is empty (run --mode daily first).")
+    if not branches:
+        raise ValueError("Cannot generate ERP data: live_market.BRANCHES is empty (run --mode daily first).")
     rng = random.Random(seed)
     base_now = base_now_override or datetime(2026, 10, 31, 2, 0, 0, tzinfo=timezone.utc)
 
@@ -703,7 +681,10 @@ def generate_raw_supply_chain_tables(
         prof: CategorySupplyChainProfile = anchor_info["profile"]
 
         max_lookback_days = 1 if start_po_seq > 1 else 60
-        order_dt = base_now - timedelta(days=rng.randint(0, max_lookback_days), hours=rng.randint(0, 23))
+        if lookback_hours is not None:
+            order_dt = base_now - timedelta(minutes=rng.randint(0, lookback_hours * 60))
+        else:
+            order_dt = base_now - timedelta(days=rng.randint(0, max_lookback_days), hours=rng.randint(0, 23))
         lead_days = rng.randint(prof.lead_time_days[0], prof.lead_time_days[1])
         expected_dt = order_dt + timedelta(days=lead_days)
         is_received = expected_dt <= base_now
@@ -770,7 +751,10 @@ def generate_raw_supply_chain_tables(
         # Central Warehouse inventory snapshot
         wh_qty = rng.randint(0, prof.reorder_point) if is_oos else rng.randint(prof.wh_stock_range[0], prof.wh_stock_range[1])
         reserved_qty = rng.randint(0, max(1, int(wh_qty * 0.15))) if wh_qty > 0 else 0
-        snap_dt = base_now - timedelta(hours=rng.randint(1, 36))
+        if lookback_hours is not None:
+            snap_dt = base_now - timedelta(minutes=rng.randint(0, lookback_hours * 60))
+        else:
+            snap_dt = base_now - timedelta(hours=rng.randint(1, 36))
 
         wh_log = {
             "INV_LOG_ID": f"INV-LOG-{inv_seq:06d}",
@@ -839,7 +823,10 @@ def generate_raw_supply_chain_tables(
         channel = rng.choice(channels)
 
         max_ord_lookback = 1 if start_ord_seq > 1 else 30
-        ord_dt = base_now - timedelta(days=rng.randint(0, max_ord_lookback), hours=rng.randint(0, 23), minutes=rng.randint(0, 59))
+        if lookback_hours is not None:
+            ord_dt = base_now - timedelta(minutes=rng.randint(0, lookback_hours * 60))
+        else:
+            ord_dt = base_now - timedelta(days=rng.randint(0, max_ord_lookback), hours=rng.randint(0, 23), minutes=rng.randint(0, 59))
         num_lines = rng.choices([1, 2, 3], weights=[0.65, 0.25, 0.10], k=1)[0]
 
         store_pids = [p["PRODUCT_ID"] for p in products if p["STORE"] == store_id]
@@ -853,7 +840,7 @@ def generate_raw_supply_chain_tables(
             iprof: CategorySupplyChainProfile = iinfo["profile"]
             unit_price = float(iinfo["product"]["CURRENT_PRICE"])
             raw_qty = rng.randint(iprof.cust_order_qty_range[0], iprof.cust_order_qty_range[1])
-            # Refinement #2: Price-Cap Guard (>500 EGP -> 1-2 units; >3000 EGP -> 1 unit)
+            # Business rule #2: Price-Cap Guard (>3000 -> 1; 500-3000 -> max 2; <=500 -> max 10)
             qty = apply_price_cap_to_qty(raw_qty, unit_price, rng)
             unit_cost = float(iinfo["unit_cost"])
 
@@ -963,7 +950,7 @@ def generate_raw_supply_chain_tables(
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# 7. DDL & Vectorized Bulk Loaders (Local DuckDB + Databricks supply_chain_stage)
+# 7. DDL & Local Loaders (DuckDB supply_chain_stage + Bronze Parquet)
 # ─────────────────────────────────────────────────────────────────────────────
 
 SUPPLY_CHAIN_DDL: dict[str, str] = {
@@ -1087,311 +1074,181 @@ SUPPLY_CHAIN_DDL: dict[str, str] = {
 }
 
 
-def save_to_local_duckdb(
-    tables: dict[str, list[dict[str, Any]]],
-    db_path: str = "dwh/egypt_ecommerce.duckdb",
-) -> dict[str, int]:
-    """Save all 8 RAW_* tables into local master DuckDB (under supply_chain_stage and main)."""
-    con = duckdb.connect(db_path)
-    con.execute("CREATE SCHEMA IF NOT EXISTS supply_chain_stage")
-    counts: dict[str, int] = {}
-
-    for tname, rows in tables.items():
-        if not rows:
-            counts[tname] = 0
-            continue
-        cols = list(rows[0].keys())
-        placeholders = ", ".join(["?"] * len(cols))
-        col_names = ", ".join(cols)
-        tuples = [tuple(r[c] for c in cols) for r in rows]
-
-        for schema_prefix in ("supply_chain_stage.", ""):
-            con.execute(f"DROP TABLE IF EXISTS {schema_prefix}{tname}")
-            con.execute(SUPPLY_CHAIN_DDL[tname].format(schema=schema_prefix).replace("STRING", "VARCHAR"))
-            con.executemany(
-                f"INSERT INTO {schema_prefix}{tname} ({col_names}) VALUES ({placeholders})",
-                tuples,
-            )
-
-        counts[tname] = con.execute(f"SELECT COUNT(*) FROM supply_chain_stage.{tname}").fetchone()[0]
-    con.close()
-    return counts
+def ensure_supply_chain_tables(conn: duckdb.DuckDBPyConnection) -> None:
+    conn.execute("CREATE SCHEMA IF NOT EXISTS supply_chain_stage")
+    for ddl in SUPPLY_CHAIN_DDL.values():
+        conn.execute(ddl.format(schema="supply_chain_stage.").replace("STRING", "VARCHAR"))
 
 
-def upload_to_databricks_stage(
-    tables: dict[str, list[dict[str, Any]]],
-    target_schema: str = "workspace.supply_chain_stage",
-    batch_size: int = 1000,
-) -> dict[str, int]:
-    """Vectorized multi-row batch load of all 8 RAW_* tables into Databricks workspace.supply_chain_stage."""
-    from dwh.databricks_client import _sql_lit, get_databricks_connection
-
-    counts: dict[str, int] = {}
-    with get_databricks_connection() as conn:
-        cur = conn.cursor()
-        cur.execute(f"CREATE SCHEMA IF NOT EXISTS {target_schema}")
-
-        for tname, rows in tables.items():
-            full_table = f"{target_schema}.{tname}"
-            print(f"[Databricks] Preparing {full_table} ({len(rows)} rows)...")
-            cur.execute(f"DROP TABLE IF EXISTS {full_table}")
-            cur.execute(SUPPLY_CHAIN_DDL[tname].format(schema=f"{target_schema}."))
-
-            if not rows:
-                counts[tname] = 0
-                continue
-
-            cols = list(rows[0].keys())
-            col_list_sql = ", ".join(cols)
-
-            for i in range(0, len(rows), batch_size):
-                chunk = rows[i : i + batch_size]
-                values_rows = []
-                for r in chunk:
-                    vals = ", ".join(_sql_lit(r[c]) for c in cols)
-                    values_rows.append(f"({vals})")
-                values_sql = ",\n".join(values_rows)
-                cur.execute(f"INSERT INTO {full_table} ({col_list_sql}) VALUES\n{values_sql}")
-
-            cur.execute(f"SELECT COUNT(*) FROM {full_table}")
-            counts[tname] = cur.fetchone()[0]
-            print(f"[Databricks] Verified {full_table}: {counts[tname]:,} rows.")
-
-    return counts
-
-
-def run_daily_incremental_supply_chain_sync(
-    db_path: str = "dwh/egypt_ecommerce.duckdb",
-    target_schema: str = "workspace.supply_chain_stage",
-    use_databricks: bool = True,
-    daily_pos: int = 25,
-    daily_inv_products: int = 250,
-    daily_orders: int = 120,
-    batch_size: int = 1000,
-) -> dict[str, Any]:
-    """
-    Daily incremental supply chain operational sync (invoked by Airflow DAG after daily scraping):
-      1. Reads freshly scraped products/prices and branches from workspace.live_market (or master DuckDB).
-      2. If RAW_* tables do not exist yet, runs full initial baseline load.
-      3. Progresses open in-flight Purchase Orders, Customer Orders, and Shipments toRECEIVED / DELIVERED.
-      4. Generates today's new Purchase Orders, Inventory Snapshots, Customer Orders, Order Items, and Shipments
-         anchored to the latest live market prices, and appends (INSERT INTO) to both local DuckDB and Databricks.
-    """
-    from dwh.databricks_client import _sql_lit, get_databricks_connection, is_databricks_configured
-
-    products, branches = load_live_catalog_and_branches(use_databricks=use_databricks and is_databricks_configured())
-    now_utc = datetime.now(timezone.utc)
-    now_iso = now_utc.strftime("%Y-%m-%dT%H:%M:%SZ")
-
-    # Check if baseline already exists in local DuckDB
-    con = duckdb.connect(db_path)
-    con.execute("CREATE SCHEMA IF NOT EXISTS supply_chain_stage")
-    has_baseline = False
-    try:
-        existing_cnt = con.execute("SELECT COUNT(*) FROM supply_chain_stage.RAW_CUSTOMER_ORDERS").fetchone()[0]
-        has_baseline = existing_cnt > 0
-    except Exception:
-        has_baseline = False
-
-    if not has_baseline:
-        con.close()
-        print("[Incremental Sync] No baseline found in supply_chain_stage — running initial full load...")
-        full_tables = generate_raw_supply_chain_tables(products, branches, sample_only=False)
-        duck_counts = save_to_local_duckdb(full_tables, db_path=db_path)
-        dbx_counts = upload_to_databricks_stage(full_tables, target_schema=target_schema) if (use_databricks and is_databricks_configured()) else {}
-        return {"mode": "initial_full_load", "duckdb_counts": duck_counts, "databricks_counts": dbx_counts}
-
-    # Parse current max sequence IDs from local DuckDB
-    def _parse_seq(val: str | None, default: int) -> int:
-        if not val:
-            return default
-        digits = "".join(ch for ch in str(val).split("-")[-1] if ch.isdigit())
-        return int(digits) if digits else default
-
-    max_po_id = con.execute("SELECT MAX(PO_ID) FROM supply_chain_stage.RAW_PURCHASE_ORDERS").fetchone()[0]
-    max_inv_id = con.execute("SELECT MAX(INV_LOG_ID) FROM supply_chain_stage.RAW_INVENTORY_LOGS").fetchone()[0]
-    max_ord_id = con.execute("SELECT MAX(ORDER_ID) FROM supply_chain_stage.RAW_CUSTOMER_ORDERS").fetchone()[0]
-
-    start_po_seq = _parse_seq(max_po_id, 450) + 1
-    start_inv_seq = _parse_seq(max_inv_id, 9942) + 1
-    start_ord_seq = _parse_seq(max_ord_id, 2500) + 1
-
-    # 1. Advance open in-flight orders/shipments/POs in local DuckDB
-    for schema_prefix in ("supply_chain_stage.", ""):
-        con.execute(f"""
-            UPDATE {schema_prefix}RAW_SHIPMENTS
-            SET SHIPMENT_STATUS_RAW = 'DELIVERED',
-                DELIVERED_TS_RAW = '{now_iso}'
-            WHERE UPPER(SHIPMENT_STATUS_RAW) IN ('IN_TRANSIT', 'OUT_FOR_DELIVERY', 'LABEL_CREATED')
-        """)
-        con.execute(f"""
-            UPDATE {schema_prefix}RAW_CUSTOMER_ORDERS
-            SET ORDER_STATUS_RAW = 'DELIVERED'
-            WHERE UPPER(ORDER_STATUS_RAW) IN ('SHIPPED', 'PROCESSING')
-        """)
-        con.execute(f"""
-            UPDATE {schema_prefix}RAW_PURCHASE_ORDERS
-            SET PO_STATUS_RAW = 'RECEIVED'
-            WHERE UPPER(PO_STATUS_RAW) IN ('IN_TRANSIT', 'APPROVED', 'PENDING_DELIVERY')
-        """)
-        con.execute(f"""
-            UPDATE {schema_prefix}RAW_PO_LINES
-            SET RECEIVED_QTY = ORDERED_QTY
-            WHERE RECEIVED_QTY = 0
-        """)
-
-    # 2. Generate today's new operational delta batch
-    daily_seed = int(now_utc.timestamp())
-    delta_tables = generate_raw_supply_chain_tables(
-        products=products,
-        branches=branches,
-        seed=daily_seed,
-        sample_only=False,
-        start_po_seq=start_po_seq,
-        start_inv_seq=start_inv_seq,
-        start_ord_seq=start_ord_seq,
-        num_pos_override=daily_pos,
-        num_cust_orders_override=daily_orders,
-        num_inv_products_override=daily_inv_products,
-        base_now_override=now_utc,
+def _insert_rows(conn: duckdb.DuckDBPyConnection, table: str, rows: list[dict[str, Any]]) -> None:
+    if not rows:
+        return
+    cols = list(rows[0].keys())
+    conn.executemany(
+        f"INSERT INTO supply_chain_stage.{table} ({', '.join(cols)}) VALUES ({', '.join(['?'] * len(cols))})",
+        [tuple(r[c] for c in cols) for r in rows],
     )
 
-    append_table_names = [
-        "RAW_PURCHASE_ORDERS",
-        "RAW_PO_LINES",
-        "RAW_INVENTORY_LOGS",
-        "RAW_CUSTOMER_ORDERS",
-        "RAW_ORDER_ITEMS",
-        "RAW_SHIPMENTS",
+
+# Open-status progression: (table, business key, SET clause, WHERE clause)
+def _status_advances(now_iso: str) -> list[tuple[str, str, str, str]]:
+    return [
+        ("RAW_SHIPMENTS", "SHIPMENT_ID",
+         f"SHIPMENT_STATUS_RAW = 'DELIVERED', DELIVERED_TS_RAW = '{now_iso}'",
+         "UPPER(SHIPMENT_STATUS_RAW) IN ('IN_TRANSIT', 'OUT_FOR_DELIVERY', 'LABEL_CREATED')"),
+        ("RAW_CUSTOMER_ORDERS", "ORDER_ID",
+         "ORDER_STATUS_RAW = 'DELIVERED'",
+         "UPPER(ORDER_STATUS_RAW) IN ('SHIPPED', 'PROCESSING')"),
+        ("RAW_PURCHASE_ORDERS", "PO_ID",
+         "PO_STATUS_RAW = 'RECEIVED'",
+         "UPPER(PO_STATUS_RAW) IN ('IN_TRANSIT', 'APPROVED', 'PENDING_DELIVERY')"),
+        ("RAW_PO_LINES", "PO_LINE_ID",
+         "RECEIVED_QTY = ORDERED_QTY",
+         "RECEIVED_QTY = 0"),
     ]
 
-    duck_counts: dict[str, int] = {}
-    appended_counts: dict[str, int] = {}
-    for tname in append_table_names:
-        rows = delta_tables[tname]
-        appended_counts[tname] = len(rows)
-        if rows:
-            cols = list(rows[0].keys())
-            placeholders = ", ".join(["?"] * len(cols))
-            col_names = ", ".join(cols)
-            tuples = [tuple(r[c] for c in cols) for r in rows]
-            for schema_prefix in ("supply_chain_stage.", ""):
-                con.executemany(
-                    f"INSERT INTO {schema_prefix}{tname} ({col_names}) VALUES ({placeholders})",
-                    tuples,
-                )
 
-    for tname in SUPPLY_CHAIN_DDL.keys():
-        duck_counts[tname] = con.execute(f"SELECT COUNT(*) FROM supply_chain_stage.{tname}").fetchone()[0]
-    con.close()
+def advance_open_statuses(
+    conn: duckdb.DuckDBPyConnection, now_iso: str
+) -> dict[str, list[dict[str, Any]]]:
+    """Progress in-flight POs / orders / shipments; return the updated rows (for bronze).
 
-    # 3. Advance open statuses & append delta batch in Databricks workspace.supply_chain_stage
-    dbx_counts: dict[str, int] = {}
-    if use_databricks and is_databricks_configured():
-        with get_databricks_connection() as conn:
-            cur = conn.cursor()
-            cur.execute(f"CREATE SCHEMA IF NOT EXISTS {target_schema}")
-            cur.execute(f"""
-                UPDATE {target_schema}.RAW_SHIPMENTS
-                SET SHIPMENT_STATUS_RAW = 'DELIVERED',
-                    DELIVERED_TS_RAW = '{now_iso}'
-                WHERE UPPER(SHIPMENT_STATUS_RAW) IN ('IN_TRANSIT', 'OUT_FOR_DELIVERY', 'LABEL_CREATED')
-            """)
-            cur.execute(f"""
-                UPDATE {target_schema}.RAW_CUSTOMER_ORDERS
-                SET ORDER_STATUS_RAW = 'DELIVERED'
-                WHERE UPPER(ORDER_STATUS_RAW) IN ('SHIPPED', 'PROCESSING')
-            """)
-            cur.execute(f"""
-                UPDATE {target_schema}.RAW_PURCHASE_ORDERS
-                SET PO_STATUS_RAW = 'RECEIVED'
-                WHERE UPPER(PO_STATUS_RAW) IN ('IN_TRANSIT', 'APPROVED', 'PENDING_DELIVERY')
-            """)
-            cur.execute(f"""
-                UPDATE {target_schema}.RAW_PO_LINES
-                SET RECEIVED_QTY = ORDERED_QTY
-                WHERE RECEIVED_QTY = 0
-            """)
+    Cancelled orders are never touched: their shipments carry RETURNED_TO_SENDER /
+    CANCELLED so they never match the in-flight WHERE clauses (business rule #1).
+    """
+    updated: dict[str, list[dict[str, Any]]] = {}
+    for table, key, set_sql, where_sql in _status_advances(now_iso):
+        full = f"supply_chain_stage.{table}"
+        keys = [r[0] for r in conn.execute(f"SELECT DISTINCT {key} FROM {full} WHERE {where_sql}").fetchall()]
+        if not keys:
+            continue
+        conn.execute(f"UPDATE {full} SET {set_sql} WHERE {where_sql}")
+        conn.register("adv_keys", pd.DataFrame({"k": keys}))
+        cur = conn.execute(f"SELECT * FROM {full} WHERE {key} IN (SELECT k FROM adv_keys)")
+        cols = [d[0] for d in cur.description]
+        updated[table] = [dict(zip(cols, r)) for r in cur.fetchall()]
+        conn.unregister("adv_keys")
+    return updated
 
-            for tname in append_table_names:
-                rows = delta_tables[tname]
-                if not rows:
-                    continue
-                full_table = f"{target_schema}.{tname}"
-                cols = list(rows[0].keys())
-                col_list_sql = ", ".join(cols)
-                for i in range(0, len(rows), batch_size):
-                    chunk = rows[i : i + batch_size]
-                    values_rows = [
-                        "(" + ", ".join(_sql_lit(r[c]) for c in cols) + ")"
-                        for r in chunk
-                    ]
-                    cur.execute(f"INSERT INTO {full_table} ({col_list_sql}) VALUES\n" + ",\n".join(values_rows))
 
-            for tname in SUPPLY_CHAIN_DDL.keys():
-                cur.execute(f"SELECT COUNT(*) FROM {target_schema}.{tname}")
-                dbx_counts[tname] = cur.fetchone()[0]
+def _max_seq(conn: duckdb.DuckDBPyConnection, table: str, col: str, default: int) -> int:
+    """Numeric max of the trailing digits in an ID like PO-2026-00533 / ORD-EG-002500."""
+    val = conn.execute(
+        f"SELECT MAX(TRY_CAST(regexp_extract({col}, '([0-9]+)$', 1) AS BIGINT)) "
+        f"FROM supply_chain_stage.{table}"
+    ).fetchone()[0]
+    return int(val) if val is not None else default
 
+
+# Per-mode volume profiles for incremental deltas
+ERP_PROFILES: dict[str, dict[str, Any]] = {
+    "daily":  {"pos": 25, "inv_products": 250, "orders": 120, "lookback_hours": None},
+    "hourly": {"pos": 2,  "inv_products": 60,  "orders": 20,  "lookback_hours": 1},
+}
+
+
+def run_erp_sync(
+    conn: duckdb.DuckDBPyConnection,
+    mode: str,
+    run_ts: datetime,
+    run_id: str,
+    bronze_root: Path | None = None,
+) -> dict[str, Any]:
+    """
+    Local ERP sync, invoked after the market scrape + CDC step:
+      1. First ever run (no RAW_CUSTOMER_ORDERS): full baseline load from live prices.
+      2. Otherwise: advance open POs / orders / shipments, then append a daily or
+         hourly delta batch anchored to the latest live prices.
+    All rows go to DuckDB `supply_chain_stage` and to local Bronze Parquet.
+    """
+    from dwh.bronze_writer import arrow_schema_for_table, write_bronze
+
+    if mode not in ERP_PROFILES:
+        raise ValueError(f"unknown mode {mode!r}")
+    ensure_supply_chain_tables(conn)
+    products, branches = load_live_catalog_and_branches(conn)
+    now_iso = run_ts.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+    has_baseline = conn.execute("SELECT COUNT(*) FROM supply_chain_stage.RAW_CUSTOMER_ORDERS").fetchone()[0] > 0
+    appended: dict[str, int] = {}
+    updated_counts: dict[str, int] = {}
+    bronze_files: list[str] = []
+
+    def _bronze(table: str, rows: list[dict], op: str) -> None:
+        schema = arrow_schema_for_table(conn, f"supply_chain_stage.{table}")
+        f = write_bronze(table.lower(), rows, schema, run_ts, run_id, op=op, root=bronze_root)
+        if f:
+            bronze_files.append(str(f))
+
+    if not has_baseline:
+        tables = generate_raw_supply_chain_tables(
+            products, branches, seed=int(run_ts.timestamp()), sample_only=False, base_now_override=run_ts,
+        )
+        for tname, rows in tables.items():
+            _insert_rows(conn, tname, rows)
+            appended[tname] = len(rows)
+            _bronze(tname, rows, "INSERT")
+        sync_mode = "baseline_full_load"
+    else:
+        updated = advance_open_statuses(conn, now_iso)
+        for tname, rows in updated.items():
+            updated_counts[tname] = len(rows)
+            _bronze(tname, rows, "UPDATE")
+
+        prof = ERP_PROFILES[mode]
+        start_po = _max_seq(conn, "RAW_PURCHASE_ORDERS", "PO_ID", 0) + 1
+        start_inv = _max_seq(conn, "RAW_INVENTORY_LOGS", "INV_LOG_ID", 0) + 1
+        start_ord = _max_seq(conn, "RAW_CUSTOMER_ORDERS", "ORDER_ID", 0) + 1
+        delta = generate_raw_supply_chain_tables(
+            products=products, branches=branches, seed=int(run_ts.timestamp()),
+            sample_only=False, start_po_seq=start_po, start_inv_seq=start_inv,
+            start_ord_seq=start_ord, num_pos_override=prof["pos"],
+            num_cust_orders_override=prof["orders"], num_inv_products_override=prof["inv_products"],
+            base_now_override=run_ts, lookback_hours=prof["lookback_hours"],
+        )
+        for tname in ("RAW_PURCHASE_ORDERS", "RAW_PO_LINES", "RAW_INVENTORY_LOGS",
+                      "RAW_CUSTOMER_ORDERS", "RAW_ORDER_ITEMS", "RAW_SHIPMENTS"):
+            rows = delta[tname]
+            _insert_rows(conn, tname, rows)
+            appended[tname] = len(rows)
+            _bronze(tname, rows, "INSERT")
+        sync_mode = f"incremental_{mode}"
+
+    totals = {
+        t: conn.execute(f"SELECT COUNT(*) FROM supply_chain_stage.{t}").fetchone()[0]
+        for t in SUPPLY_CHAIN_DDL
+    }
     return {
-        "mode": "incremental_daily_sync",
-        "appended_rows": appended_counts,
-        "duckdb_counts": duck_counts,
-        "databricks_counts": dbx_counts,
+        "mode": sync_mode,
+        "appended_rows": appended,
+        "status_updates": updated_counts,
+        "table_totals": totals,
+        "bronze_files": bronze_files,
     }
 
 
-def main():
-    parser = argparse.ArgumentParser(description="Supply Chain & ERP Raw Data Generator")
-    parser.add_argument("--dry-run", action="store_true", help="Print Category Mapping Matrix & 5-row previews without uploading to Databricks")
-    parser.add_argument("--execute-load", action="store_true", help="Generate full dataset and bulk load into local DuckDB and Databricks workspace.supply_chain_stage")
-    parser.add_argument("--incremental-daily", action="store_true", help="Progress open orders/shipments/POs and append a new daily operational batch")
-    parser.add_argument("--local-only", action="store_true", help="Read catalog from local DuckDB instead of Databricks workspace.live_market")
-    parser.add_argument("--output-json", type=str, default="", help="Optional path to dump summary JSON")
+def main() -> None:
+    """Dry-run helper: print the category mapping matrix + 5-row previews (no writes)."""
+    parser = argparse.ArgumentParser(description="Supply Chain & ERP raw data generator (preview only)")
+    parser.add_argument("--db", default=str(PROJECT_ROOT / "dwh" / "retail_lakehouse_fresh.duckdb"))
+    parser.add_argument("--output-json", default="", help="Optional path for the preview JSON")
     args = parser.parse_args()
 
-    if args.incremental_daily:
-        summary = run_daily_incremental_supply_chain_sync(use_databricks=not args.local_only)
-        print(json.dumps(summary, indent=2))
-        if args.output_json:
-            Path(args.output_json).write_text(json.dumps(summary, indent=2), encoding="utf-8")
-        return
-
-    products, branches = load_live_catalog_and_branches(use_databricks=not args.local_only)
+    conn = duckdb.connect(args.db, read_only=True)
+    try:
+        products, branches = load_live_catalog_and_branches(conn)
+    finally:
+        conn.close()
     matrix = build_category_mapping_matrix(products)
-    tables = generate_raw_supply_chain_tables(products, branches, sample_only=args.dry_run)
-
-    if args.execute_load:
-        print(f"Saving {len(tables)} RAW_* tables to local master DuckDB (dwh/egypt_ecommerce.duckdb)...")
-        duck_counts = save_to_local_duckdb(tables)
-        for k, v in duck_counts.items():
-            print(f"  [DuckDB] {k}: {v:,} rows")
-
-        print("\nUploading 8 RAW_* tables to Databricks workspace.supply_chain_stage in vectorized batches...")
-        dbx_counts = upload_to_databricks_stage(tables)
-        if args.output_json:
-            Path(args.output_json).write_text(
-                json.dumps({"duckdb_counts": duck_counts, "databricks_counts": dbx_counts}, indent=2),
-                encoding="utf-8",
-            )
-        return
-
-    if args.output_json:
-        out_data = {
-            "total_live_products": len(products),
-            "total_live_branches": len(branches),
-            "total_store_category_pairs": len(matrix),
-            "category_mapping_matrix": matrix,
-            "sample_previews": {k: v[:5] for k, v in tables.items()},
-        }
-        Path(args.output_json).write_text(json.dumps(out_data, indent=2, ensure_ascii=False), encoding="utf-8")
-        print(f"Wrote dry-run summary to {args.output_json}")
-        return
-
+    tables = generate_raw_supply_chain_tables(products, branches, sample_only=True)
     print(f"Loaded {len(products)} live products and {len(branches)} branches across {len(matrix)} (STORE, CATEGORY) pairs.")
     for tname, rows in tables.items():
         print(f"\n=== {tname} (Preview 5 of {len(rows)} rows) ===")
         for r in rows[:5]:
-            print(" ", json.dumps(r, ensure_ascii=False))
+            print(" ", json.dumps(r, ensure_ascii=False, default=str))
+    if args.output_json:
+        Path(args.output_json).write_text(
+            json.dumps({"category_mapping_matrix": matrix}, indent=2, ensure_ascii=False), encoding="utf-8")
 
 
 if __name__ == "__main__":

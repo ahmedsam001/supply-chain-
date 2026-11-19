@@ -42,6 +42,7 @@ logs/
 dwh/*.duckdb
 dwh/archive/
 airflow/
+data/local_bronze/
 audit_outputs/
 .system_generated/
 

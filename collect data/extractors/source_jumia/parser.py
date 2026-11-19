@@ -205,8 +205,7 @@ def _parse_product_card(card, base_url: str) -> Optional[dict]:
     elif gtm_brand:
         data["brand"] = str(gtm_brand).strip()
     else:
-        # Keep brand raw (no title regex guessing); leaving missing HTML brands as NULL for stage DWH layer
-        data["brand"] = None
+        data["brand"] = extract_brand_from_name(data.get("product_name", ""))
 
     # Price
     price_el = card.select_one("div.prc, .prc")

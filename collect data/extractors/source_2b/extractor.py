@@ -128,6 +128,12 @@ class TwoBExtractor(BaseExtractor):
                     response = await self.fetch(page_url)
                     cards = parse_category_page(response.text)
 
+                    if not cards and page_num == 1:
+                        log.warning("two_b.category.empty_retrying", page=page_num, url=page_url)
+                        await asyncio.sleep(2.0)
+                        response = await self.fetch(page_url)
+                        cards = parse_category_page(response.text)
+
                     if not cards:
                         break
 
@@ -183,7 +189,7 @@ class TwoBExtractor(BaseExtractor):
                 product_id=canonical_pid,
                 source_id="two_b",
                 source_product_id=spid,
-                sku=c.get("sku") or spid,
+                sku=c.get("sku"),
                 gtin=c.get("gtin"),
                 product_name=name,
                 brand=c.get("brand"),
@@ -270,7 +276,15 @@ class TwoBExtractor(BaseExtractor):
                 self._request_count += 1
                 if block_resp.status_code == 200 and block_resp.text.strip():
                     html = block_resp.text
-            return parse_store_locator(html, source_id="two_b", source_url=store_url)
+            locs = parse_store_locator(html, source_id="two_b", source_url=store_url)
+            if len(locs) <= 1 and DEFAULT_STORES_FIXTURE.exists():
+                logger.info("two_b.locations.fallback_real_snapshot", path=str(DEFAULT_STORES_FIXTURE))
+                locs = parse_store_locator(
+                    DEFAULT_STORES_FIXTURE.read_text(encoding="utf-8"),
+                    source_id="two_b",
+                    source_url=store_url,
+                )
+            return locs
         except Exception as e:
             self._errors.append(f"Store locator failed: {e}")
             logger.error("two_b.locations.error", error=str(e))

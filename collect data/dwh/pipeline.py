@@ -1,7 +1,14 @@
 #!/usr/bin/env python3
 """
-Egypt E-Commerce Enterprise DWH Pipeline (Department-Partitioned Star Schema)
-=============================================================================
+Egypt E-Commerce Extraction/Validation Library + Legacy Star-Schema Loader
+==========================================================================
+NOTE: The active, local-first pipeline entrypoint is `dwh/run_pipeline.py`
+(hash-based CDC into `dwh/retail_lakehouse_fresh.duckdb` + local Bronze Parquet).
+This module remains the shared extraction / validation / quality-gate library
+(`run_live_extraction`, `validate_source_bundle`, `enforce_strict_quality_gate`)
+and the legacy star-schema loader kept for tests and ad-hoc analysis.
+It has NO cloud/warehouse connectors.
+
 Orchestrates data ingestion from configured retail sources, classifies every product
 into its canonical department taxonomy, populates an analytical Star Schema in DuckDB,
 and writes per-department JSON partitions.
@@ -40,6 +47,7 @@ from __future__ import annotations
 import argparse
 import asyncio
 import json
+import os
 import sys
 import time
 from datetime import date, datetime, timezone
@@ -77,6 +85,10 @@ SOURCES = ["jumia", "two_b", "carrefour", "tradeline", "dream2000", "raya"]
 def get_db(db_path: Path) -> duckdb.DuckDBPyConnection:
     db_path.parent.mkdir(parents=True, exist_ok=True)
     conn = duckdb.connect(str(db_path))
+    try:
+        os.chmod(db_path, 0o666)
+    except OSError:
+        pass
     _apply_schema(conn)
     _seed_departments(conn)
     return conn
@@ -119,103 +131,6 @@ def _seed_departments(conn: duckdb.DuckDBPyConnection) -> None:
         ])
 
 
-def merge_source_db_to_master(source_db_path: Path, master_db_path: Path = DEFAULT_DB) -> dict[str, int]:
-    """
-    Safely merge a per-source staging DuckDB into the master DWH DuckDB.
-    Guarantees idempotency and deduplication across all dimensions and facts.
-    """
-    if not source_db_path.exists():
-        return {}
-    if source_db_path.resolve() == master_db_path.resolve():
-        return {}
-
-    counts: dict[str, int] = {}
-    master_conn = get_db(master_db_path)
-    src_escaped = str(source_db_path.resolve()).replace("'", "''")
-
-    try:
-        master_conn.execute(f"ATTACH '{src_escaped}' AS src (READ_ONLY)")
-
-        # 1. dim_source
-        master_conn.execute("""
-            INSERT INTO dim_source (source_id, source_name, domain, business_type, collection_mode)
-            SELECT source_id, source_name, domain, business_type, collection_mode
-            FROM src.dim_source
-            ON CONFLICT (source_id) DO UPDATE SET
-                source_name     = excluded.source_name,
-                domain          = excluded.domain,
-                business_type   = excluded.business_type,
-                collection_mode = excluded.collection_mode
-        """)
-
-        # 2. dim_product
-        master_conn.execute("""
-            INSERT INTO dim_product
-            SELECT * FROM src.dim_product
-            ON CONFLICT (product_id) DO UPDATE SET
-                last_seen_at  = excluded.last_seen_at,
-                department    = excluded.department,
-                brand         = COALESCE(excluded.brand, dim_product.brand),
-                category      = COALESCE(excluded.category, dim_product.category),
-                subcategory   = COALESCE(excluded.subcategory, dim_product.subcategory),
-                sku           = COALESCE(excluded.sku, dim_product.sku),
-                gtin          = COALESCE(excluded.gtin, dim_product.gtin),
-                product_url   = COALESCE(excluded.product_url, dim_product.product_url),
-                image_url     = COALESCE(excluded.image_url, dim_product.image_url)
-        """)
-
-        # 3. dim_location
-        master_conn.execute("""
-            INSERT INTO dim_location
-            SELECT * FROM src.dim_location
-            ON CONFLICT (location_id) DO UPDATE SET
-                branch_name   = excluded.branch_name,
-                location_name = excluded.location_name,
-                latitude      = excluded.latitude,
-                longitude     = excluded.longitude,
-                address       = COALESCE(excluded.address, dim_location.address),
-                phone         = COALESCE(excluded.phone, dim_location.phone),
-                working_hours = COALESCE(excluded.working_hours, dim_location.working_hours)
-        """)
-
-        # 4. fact_observation
-        master_conn.execute("""
-            INSERT INTO fact_observation
-            SELECT * FROM src.fact_observation
-            ON CONFLICT (observation_id) DO UPDATE SET
-                price                 = excluded.price,
-                old_price             = excluded.old_price,
-                discount              = excluded.discount,
-                availability_status   = excluded.availability_status,
-                stock_status          = excluded.stock_status,
-                observed_at           = excluded.observed_at
-        """)
-
-        # 5. fact_quality_issue
-        master_conn.execute("""
-            INSERT INTO fact_quality_issue
-            SELECT * FROM src.fact_quality_issue
-            ON CONFLICT (issue_id) DO NOTHING
-        """)
-
-        # 6. run_manifest
-        master_conn.execute("""
-            INSERT INTO run_manifest
-            SELECT * FROM src.run_manifest
-            ON CONFLICT (run_id) DO NOTHING
-        """)
-
-        master_conn.execute("DETACH src")
-    finally:
-        master_conn.close()
-
-    return counts
-
-
-# ═══════════════════════════════════════════════════════════════════════════════
-# Upsert helpers
-# ═══════════════════════════════════════════════════════════════════════════════
-
 def _ensure_product_department(p: dict) -> str:
     tax = classify_product(
         product_name=p.get("product_name"),
@@ -233,7 +148,7 @@ def _ensure_product_department(p: dict) -> str:
 
 
 def upsert_source(conn, source_id: str, meta: dict) -> None:
-    from dwh.databricks_client import DEFAULT_STORES
+    from dwh.cdc_snapshot import DEFAULT_STORES
     store_defaults = {s["store_id"]: s for s in DEFAULT_STORES}.get(source_id, {})
     conn.execute("""
         INSERT INTO dim_source (source_id, source_name, domain, business_type, collection_mode)
@@ -903,7 +818,7 @@ def enforce_strict_quality_gate(
     - Hard Stop on Critical NULLs: Rejects any product if CURRENT_PRICE is NULL
       (unless explicitly marked 'Call for Price'), or if PRODUCT_ID, PRODUCT_NAME,
       STORE, PRODUCT_URL, or STOCK_STATUS is NULL or 'UNKNOWN' due to a failed join.
-    - Guarantees 100% referential integrity and parity between DuckDB and Databricks.
+    - Guarantees 100% referential integrity between products, observations and locations.
     """
     # 1. Deduplicate and validate observations by (source_id, canonical_pid, run_date)
     obs_by_pid: dict[str, dict] = {}
@@ -1028,8 +943,13 @@ async def run_live_extraction(
     offline: bool,
     limit: int,
     department: Optional[str] = None,
+    with_locations: bool = True,
 ) -> dict:
-    """Run the extractor and return fresh data."""
+    """Run the extractor and return fresh data.
+
+    `with_locations=False` skips the (slow) branch/store-locator pass; used by the
+    hourly price/stock pulse.
+    """
     if not offline and source_id in ("tradeline", "dream2000"):
         from extractors.shopify_extractor import TradelineExtractor, Dream2000Extractor
         ext = (
@@ -1043,7 +963,7 @@ async def run_live_extraction(
             prods = await ext.extract_products()
             obs = await ext.extract_availability()
             try:
-                live_locs = await ext.extract_locations()
+                live_locs = await ext.extract_locations() if with_locations else []
                 locs = [l.model_dump(mode="json") if hasattr(l, "model_dump") else l for l in live_locs]
             except Exception:
                 locs = []
@@ -1077,7 +997,7 @@ async def run_live_extraction(
             await ext._init_http_client()
             prods = await ext.extract_products()
             obs = await ext.extract_availability()
-            locs = await ext.extract_locations()
+            locs = await ext.extract_locations() if with_locations else []
             duration = time.monotonic() - t0
             return {
                 "products": [p.model_dump(mode="json") if hasattr(p, "model_dump") else p for p in prods],
@@ -1109,7 +1029,7 @@ async def run_live_extraction(
             await ext._init_http_client()
             prods = await ext.extract_products()
             obs = await ext.extract_availability()
-            locs = await ext.extract_locations()
+            locs = await ext.extract_locations() if with_locations else []
             duration = time.monotonic() - t0
             return {
                 "products": [p.model_dump(mode="json") if hasattr(p, "model_dump") else p for p in prods],
@@ -1174,31 +1094,10 @@ async def run_pipeline(
     limit: int = 500,
     department: Optional[str] = None,
     include_raw_snapshots: Optional[bool] = None,
-    sync_databricks: Optional[bool] = None,
 ) -> None:
     is_main_db = db_path.resolve() == DEFAULT_DB.resolve()
     if include_raw_snapshots is None:
         include_raw_snapshots = is_main_db and offline
-
-    from dwh.databricks_client import (
-        ensure_databricks_schema,
-        get_databricks_connection,
-        ingest_direct_to_databricks,
-        is_databricks_configured,
-        load_databricks_config,
-    )
-    dbx_cfg = load_databricks_config()
-    if sync_databricks is None:
-        sync_databricks = is_main_db and is_databricks_configured(dbx_cfg) and not offline
-
-    dbx_conn = None
-    if sync_databricks and is_databricks_configured(dbx_cfg):
-        try:
-            dbx_conn = get_databricks_connection(dbx_cfg)
-            print(f"  🧱  Databricks Direct Connection: READY ({dbx_cfg.get('catalog')}.{dbx_cfg.get('schema')})")
-        except Exception as dbx_err:
-            print(f"  ⚠️  Databricks direct connection failed: {dbx_err}")
-            dbx_conn = None
 
     target_dept = resolve_department_alias(department) if department else None
     conn = get_db(db_path)
@@ -1213,11 +1112,10 @@ async def run_pipeline(
     )
 
     print(f"\n{'═'*65}")
-    print(f"  EGYPT E-COMMERCE DWH PIPELINE (DIRECT TO DATABRICKS)")
+    print(f"  EGYPT E-COMMERCE LEGACY STAR-SCHEMA LOADER (LOCAL DUCKDB)")
     print(f"  Date       : {today}")
     print(f"  Mode       : {'offline_fixture' if offline else 'LIVE'} (raw_snapshots={include_raw_snapshots})")
     print(f"  Department : {dept_label}")
-    print(f"  Databricks : {'DIRECT BATCH PUSH' if dbx_conn else 'OFFLINE / LOCAL'}")
     print(f"  DB         : {db_path}")
     print(f"{'═'*65}\n")
 
@@ -1325,25 +1223,6 @@ async def run_pipeline(
             "errors": len(errors),
         }, quality_score, elapsed, started_at, finished_at)
 
-        # Direct Databricks Batch Push (Immediate ingestion per source into 5 clean tables)
-        if dbx_conn:
-            try:
-                ingest_direct_to_databricks(
-                    source_id=source_id,
-                    products=products,
-                    observations=observations,
-                    locations=locations,
-                    run_meta={
-                        "run_id": run_id,
-                        "duration_seconds": elapsed,
-                        "started_at": started_at,
-                        "finished_at": finished_at,
-                    },
-                    conn=dbx_conn,
-                )
-            except Exception as dbx_err:
-                print(f"    ⚠️  Databricks direct ingestion error for {source_id}: {dbx_err}")
-
         total_products += len(products)
         total_obs      += len(observations)
         total_locs     += len(locations)
@@ -1355,13 +1234,6 @@ async def run_pipeline(
         )
 
     conn.close()
-    if dbx_conn:
-        try:
-            dbx_conn.close()
-            print("  🧱  Databricks connection closed successfully.")
-        except Exception:
-            pass
-
     total_elapsed = time.monotonic() - pipeline_start
     print(f"\n{'═'*65}")
     print(f"  PIPELINE COMPLETE  ({total_elapsed:.1f}s)")
@@ -1373,18 +1245,6 @@ async def run_pipeline(
     print(f"{'═'*65}\n")
 
     _print_db_summary(db_path)
-
-    # Sync DuckDB tables to Databricks if explicit fallback export requested and not already pushed
-    if sync_databricks and not dbx_conn:
-        try:
-            from dwh.export_to_databricks import export_to_databricks
-            export_to_databricks(
-                duck_db=db_path,
-                cfg=dbx_cfg,
-                dry_run=not is_databricks_configured(dbx_cfg),
-            )
-        except Exception as export_err:
-            print(f"  ⚠️  Databricks fallback export error: {export_err}")
 
 
 def list_departments_cli() -> None:
@@ -1443,7 +1303,7 @@ def _print_db_summary(db_path: Path) -> None:
 # ═══════════════════════════════════════════════════════════════════════════════
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Egypt E-Commerce DWH Pipeline (Department-Partitioned + Databricks)")
+    parser = argparse.ArgumentParser(description="Egypt E-Commerce legacy star-schema loader (use dwh/run_pipeline.py for the local CDC pipeline)")
     parser.add_argument("--live", action="store_true",
                         help="Run live scraping (default: offline fixture)")
     parser.add_argument("--source", default=None,
@@ -1452,14 +1312,10 @@ def main() -> None:
                         help="Run/filter a specific department only (e.g. mobiles, laptops, electronics, appliances, meats, dairy, grocery, beverages, cleaning, beauty)")
     parser.add_argument("--list-departments", action="store_true",
                         help="List all canonical departments and their isolated DWH views")
-    parser.add_argument("--db", default=str(DEFAULT_DB),
-                        help=f"DuckDB path (default: {DEFAULT_DB})")
+    parser.add_argument("--db", default=None,
+                        help="DuckDB path (REQUIRED for loading; the legacy backup DB is never a default)")
     parser.add_argument("--limit", type=int, default=1000,
                         help="Max products per source (default: 1000)")
-    parser.add_argument("--databricks", action="store_true",
-                        help="Force sync DWH tables to Databricks after pipeline completes")
-    parser.add_argument("--no-databricks", action="store_true",
-                        help="Skip automatic Databricks sync")
     parser.add_argument("--query", action="store_true",
                         help="Just print DB summary, don't run pipeline")
     args = parser.parse_args()
@@ -1468,6 +1324,8 @@ def main() -> None:
         list_departments_cli()
         return
 
+    if not args.db:
+        parser.error("--db is required (legacy loader never writes to the backup DB by default)")
     db_path = Path(args.db)
 
     if args.query:
@@ -1476,7 +1334,6 @@ def main() -> None:
 
     sources = [args.source] if args.source else SOURCES
     offline = not args.live
-    sync_dbx = False if args.no_databricks else (True if args.databricks else None)
 
     asyncio.run(run_pipeline(
         db_path=db_path,
@@ -1484,7 +1341,6 @@ def main() -> None:
         offline=offline,
         limit=args.limit,
         department=args.department,
-        sync_databricks=sync_dbx,
     ))
 
 

@@ -222,11 +222,7 @@ class JumiaExtractor(BaseExtractor):
         else:
             categories_to_crawl = list(CATEGORY_URLS.items())
 
-        page_limit = (
-            min(30, MAX_PAGES_PER_CATEGORY)
-            if self.max_products > 100
-            else min(self.max_pages, MAX_PAGES_PER_CATEGORY)
-        )
+        page_limit = min(self.max_pages, MAX_PAGES_PER_CATEGORY)
 
         consecutive_empty_cats = 0
         for cat_name, cat_path in categories_to_crawl:
@@ -251,6 +247,12 @@ class JumiaExtractor(BaseExtractor):
                 try:
                     html = await self._fetch_html(page_url)
                     cards = parse_category_page(html, BASE_URL)
+
+                    if not cards and page_num == 1:
+                        log.warning("jumia.category.empty_retrying", page=page_num, url=page_url)
+                        await asyncio.sleep(1.5)
+                        html = await self._fetch_html(page_url)
+                        cards = parse_category_page(html, BASE_URL)
 
                     if not cards:
                         log.debug("jumia.page.empty", page=page_num)

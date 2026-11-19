@@ -180,6 +180,16 @@ class RayaExtractor(BaseExtractor):
 
                         soup = BeautifulSoup(await page.content(), "html.parser")
                         cards = soup.find_all("div", class_=lambda c: c and any(k in str(c) for k in ("swiper-slide", "ProductCard", "item", "product")))
+                        if not cards and page_num == 1:
+                            logger.warning("raya.category.empty_retrying", category=cat_name, page=page_num, url=page_url)
+                            await page.wait_for_timeout(2000)
+                            await page.goto(page_url, timeout=30000, wait_until="domcontentloaded")
+                            await page.wait_for_timeout(2000)
+                            for scroll_y in (800, 1800, 3200, 5000):
+                                await page.evaluate(f"window.scrollTo(0, {scroll_y})")
+                                await page.wait_for_timeout(350)
+                            soup = BeautifulSoup(await page.content(), "html.parser")
+                            cards = soup.find_all("div", class_=lambda c: c and any(k in str(c) for k in ("swiper-slide", "ProductCard", "item", "product")))
                         if not cards:
                             break
 

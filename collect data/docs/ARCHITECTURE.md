@@ -8,7 +8,7 @@ The architecture is designed around four foundational pillars:
 1. **Compliance & Legal Honesty:** Hard automated gates (`robots.txt` enforcement, ToS classification, explicit user-agent identification).
 2. **Semantic Precision & Data Integrity:** Clear separation between physical store inventory and delivery zones, canonical stock status mapping, and deterministic deduplication.
 3. **Analytical Star Schema:** Local DuckDB warehouse with 14 isolated canonical department partitions and dynamic real-time views.
-4. **Cloud Scalability & High Performance:** Direct Lakehouse batch sync to Databricks Delta Lake with automated idempotent MERGE synchronization.
+4. **Local-First Change Capture:** Hash-based CDC (`dwh/cdc_snapshot.py`) into `dwh/retail_lakehouse_fresh.duckdb` and partitioned Bronze Parquet (`data/local_bronze/`), ready for a future ADLS Gen2 hand-off.
 
 ---
 
@@ -44,10 +44,10 @@ flowchart TD
         RAW_V["Real-Time Live Dynamic View\n(RAW_PRODUCTS_DATA)"]
     end
 
-    subgraph C["Cloud Lakehouse (Databricks Delta Lake)"]
-        STAGE["Direct Batch Sync\n(export_to_databricks.py)"]
-        COPY["Delta Lake Idempotent MERGE\n(5 Clean Tables)"]
-        SF_VIEWS["PRODUCTS, PRICE_HISTORY, STORES, BRANCHES, RUN_LOGS"]
+    subgraph C["Local Lakehouse (dwh/run_pipeline.py)"]
+        STAGE["Hash-based CDC\n(dwh/cdc_snapshot.py)"]
+        COPY["DuckDB: live_market + supply_chain_stage\n(dwh/retail_lakehouse_fresh.duckdb)"]
+        SF_VIEWS["Bronze Parquet\n(data/local_bronze/<table>/date=/hour=/)"]
     end
 
     S --> CG
@@ -69,7 +69,7 @@ flowchart TD
 
 ## 3. Dimensional Data Model (Star Schema)
 
-The analytical core of the platform is structured as an enterprise **Star Schema**, implemented in DuckDB (`dwh/egypt_ecommerce.duckdb`) and synchronized to Databricks Lakehouse:
+The analytical core of the platform is structured as an enterprise **Star Schema**, implemented in DuckDB (legacy backup `dwh/egypt_ecommerce.duckdb`; active DB is `dwh/retail_lakehouse_fresh.duckdb`):
 
 ```mermaid
 erDiagram
@@ -230,32 +230,19 @@ To provide seamless access to BI tools, dashboards, and analytical consumers wit
 
 ---
 
-## 6. Databricks Lakehouse Synchronization Engine
+## 6. Local CDC Snapshots & Bronze Parquet
 
-```mermaid
-sequenceDiagram
-    autonumber
-    participant D as DuckDB Local DWH
-    participant E as export_to_databricks.py
-    participant T as Databricks Delta Tables (5 Clean Tables)
-
-    Note over D,T: Daily Sync Pipeline (00:00 UTC / 19:00 Cairo)
-    E->>T: Apply DDL (databricks_schema.sql)
-    E->>D: Extract Clean Tables (dim_product, fact_observation, etc.)
-    E->>T: Delta Lake MERGE INTO target tables (idempotent upsert)
-    Note over E,T: PRODUCTS, PRICE_HISTORY, STORES, BRANCHES, RUN_LOGS
-```
-
-### Performance Optimization:
-- **Direct Delta MERGE:** Uses standard Delta Lake `MERGE INTO` SQL semantics with parameterized queries, ensuring zero duplicate records and transactional consistency across multi-day collections.
+- `STATE_HASH = SHA-256(PRODUCT_ID | CURRENT_PRICE | OLD_PRICE | DISCOUNT | STOCK_STATUS)` (fixed 2-decimal numbers, NULL = empty, stock upper-cased).
+- Unchanged hash: no `PRICE_HISTORY` row, only `PRODUCTS.LAST_CHECKED_AT` is updated.
+- New / changed hash: `PRODUCTS` upsert + one timestamped `PRICE_HISTORY` row (`CHANGE_TYPE` = `INSERT` | `UPDATE`); only those rows go to `data/local_bronze/market_changes/`.
+- Every run also writes its ERP deltas (and status progressions as `_change_op = UPDATE`) under `data/local_bronze/<table>/date=YYYY-MM-DD/hour=HH/` (UTC).
 
 ---
 
 ## 7. Production Reliability & Operational Governance
 
-1. **Process Concurrency Lock (`flock`):**
-   - `dwh/daily_run.sh` employs POSIX file descriptor locking (`flock -n 200 /tmp/egypt_ecommerce_daily_run.lock`).
-   - If a scheduled cron job or manual trigger is already executing, subsequent runs exit cleanly with a warning, completely avoiding DuckDB file lock collisions.
+1. **Process Concurrency Lock (`fcntl.flock`):**
+   - `dwh/run_pipeline.py` holds `dwh/.run_pipeline.lock` during a run; an overlapping run exits cleanly (DuckDB is single-writer).
 2. **Automated Log Rotation & Retention:**
    - Automated pruning removes run logs older than 14 days (`find ... -mtime +14 -delete`).
    - The cron log (`cron_1900.log`) is monitored; if it exceeds 20MB, it is automatically rotated to `.1`.
