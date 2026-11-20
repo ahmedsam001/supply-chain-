@@ -28,6 +28,9 @@ jobs:
     timeout-minutes: 35
     env:
       AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
+      ALERT_EMAIL_SENDER: ${{ secrets.ALERT_EMAIL_SENDER }}
+      ALERT_EMAIL_PASSWORD: ${{ secrets.ALERT_EMAIL_PASSWORD }}
+      ALERT_EMAIL_RECIPIENT: ${{ secrets.ALERT_EMAIL_RECIPIENT }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v4

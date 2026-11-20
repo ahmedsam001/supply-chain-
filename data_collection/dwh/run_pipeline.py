@@ -66,6 +66,7 @@ from dwh.pipeline import (  # noqa: E402
     run_live_extraction, validate_source_bundle,
 )
 from dwh.supply_chain_generator import ensure_supply_chain_tables, run_erp_sync  # noqa: E402
+from notifier import send_failure_alert  # noqa: E402
 
 LOCK_FILE = Path(tempfile.gettempdir()) / "retail_lakehouse_fresh.lock"
 HOURLY_DEFAULT_LIMIT = 300
@@ -145,6 +146,66 @@ async def scrape_all(
 # One full run
 # ─────────────────────────────────────────────────────────────────────────────
 
+def _persist_store_result(
+    conn: duckdb.DuckDBPyConnection,
+    item: dict[str, Any],
+    mode: str,
+    with_locations: bool,
+    run_ts: datetime,
+    now: datetime,
+    branches_schema: Any,
+    runlog_schema: Any,
+    bronze_root: Path,
+) -> tuple[dict[str, Any], Optional[dict[str, str]]]:
+    """Immediately flush a single store's CDC state + Bronze Parquet to disk."""
+    src = item["source"]
+    products, branch_rows, rejected = map_scrape_to_market_rows(
+        src, item["products"], item["observations"], item["locations"], now,
+    )
+    res = apply_cdc(conn, src, products, item["run_id"], now)
+
+    n_branches = 0
+    if with_locations and branch_rows:
+        n_branches = replace_branches(conn, src, branch_rows)
+        write_bronze("branches", branch_rows, branches_schema, run_ts, item["run_id"],
+                     op="INSERT", suffix=src, root=bronze_root)
+
+    if res.scraped > 0:
+        for op in ("INSERT", "UPDATE"):
+            rows = [r for r in res.changed_rows if r["CHANGE_TYPE"] == op]
+            write_bronze("market_changes", rows, MARKET_CHANGES_SCHEMA, run_ts,
+                         item["run_id"], op=op, suffix=src, root=bronze_root)
+
+    finished = datetime.now(timezone.utc).replace(tzinfo=None)
+    duration = item["scrape_seconds"]
+    log_row = insert_run_log(conn, item["run_id"], src, mode, res, duration,
+                             item["started_at"], finished)
+    write_bronze("run_logs", [log_row], runlog_schema, run_ts, item["run_id"],
+                 op="INSERT", suffix=src, root=bronze_root)
+
+    # Flush DuckDB WAL immediately after each store so partial progress is durable
+    conn.execute("CHECKPOINT;")
+
+    store_summary = {
+        "scraped": res.scraped, "unchanged": res.unchanged, "inserted": res.inserted,
+        "updated": res.updated, "rejected": rejected, "branches": n_branches,
+        "error": item.get("error"),
+    }
+
+    failure: Optional[dict[str, str]] = None
+    if item.get("error"):
+        failure = {"store": src, "reason": str(item["error"])}
+    elif item.get("circuit_breaker"):
+        failure = {"store": src, "reason": "Circuit breaker tripped (0 products returned)"}
+    elif res.scraped == 0:
+        failure = {"store": src, "reason": "Returned 0 products (possible block or empty catalog)"}
+
+    flag = f"  ✗ {failure['reason'][:40]}" if failure else ""
+    print(f"  {src:<11}{res.scraped:>8,}{res.unchanged:>11,}{res.inserted:>8,}"
+          f"{res.updated:>8,}{n_branches:>10,}{duration:>8.1f}{flag}", flush=True)
+    return store_summary, failure
+
+
 def run_once(
     mode: str,
     sources: list[str],
@@ -169,13 +230,16 @@ def run_once(
           f"{'OFFLINE fixtures' if offline else 'LIVE scraping'}")
     print(f"{'═'*72}")
 
-    scraped = asyncio.run(scrape_all(
-        sources, offline, limit, with_locations, pipeline_run_id, run_ts.date().isoformat(), concurrency,
-    ))
-
     db_path.parent.mkdir(parents=True, exist_ok=True)
     conn = duckdb.connect(str(db_path))
-    summary: dict[str, Any] = {"mode": mode, "run_id": pipeline_run_id, "stores": {}, "erp": None}
+    failed_stores: list[dict[str, str]] = []
+    summary: dict[str, Any] = {
+        "mode": mode,
+        "run_id": pipeline_run_id,
+        "stores": {},
+        "failed_stores": failed_stores,
+        "erp": None,
+    }
     try:
         ensure_live_market_schema(conn)
         ensure_supply_chain_tables(conn)
@@ -185,39 +249,61 @@ def run_once(
 
         print(f"\n  {'STORE':<11}{'SCRAPED':>8}{'UNCHANGED':>11}{'INSERT':>8}{'UPDATE':>8}{'BRANCHES':>10}{'SECS':>8}")
         print(f"  {'-'*64}")
-        for item in scraped:
-            src = item["source"]
-            products, branch_rows, rejected = map_scrape_to_market_rows(
-                src, item["products"], item["observations"], item["locations"], now,
-            )
-            res = apply_cdc(conn, src, products, item["run_id"], now)
 
-            n_branches = 0
-            if with_locations and branch_rows:
-                n_branches = replace_branches(conn, src, branch_rows)
-                write_bronze("branches", branch_rows, branches_schema, run_ts, item["run_id"],
-                             op="INSERT", suffix=src, root=bronze_root)
+        async def _scrape_and_flush_incrementally() -> None:
+            sem = asyncio.Semaphore(max(1, concurrency))
+            run_date = run_ts.date().isoformat()
 
-            for op in ("INSERT", "UPDATE"):
-                rows = [r for r in res.changed_rows if r["CHANGE_TYPE"] == op]
-                write_bronze("market_changes", rows, MARKET_CHANGES_SCHEMA, run_ts,
-                             item["run_id"], op=op, suffix=src, root=bronze_root)
+            async def _guarded(src: str) -> tuple[str, dict[str, Any]]:
+                async with sem:
+                    rid = f"{src}_{pipeline_run_id}_{uuid4().hex[:6]}"
+                    try:
+                        res_item = await _scrape_one(
+                            src, offline, limit, with_locations, rid, run_date
+                        )
+                        return src, res_item
+                    except Exception as exc:
+                        now_naive = datetime.now(timezone.utc).replace(tzinfo=None)
+                        return src, {
+                            "source": src,
+                            "run_id": rid,
+                            "started_at": now_naive,
+                            "products": [],
+                            "observations": [],
+                            "locations": [],
+                            "error": f"{type(exc).__name__}: {exc}",
+                            "scrape_seconds": 0.0,
+                        }
 
-            finished = datetime.now(timezone.utc).replace(tzinfo=None)
-            duration = item["scrape_seconds"]
-            log_row = insert_run_log(conn, item["run_id"], src, mode, res, duration,
-                                     item["started_at"], finished)
-            write_bronze("run_logs", [log_row], runlog_schema, run_ts, item["run_id"],
-                         op="INSERT", suffix=src, root=bronze_root)
+            tasks = [asyncio.create_task(_guarded(s)) for s in sources]
+            for completed in asyncio.as_completed(tasks):
+                src, item = await completed
+                try:
+                    store_summary, failure = _persist_store_result(
+                        conn=conn,
+                        item=item,
+                        mode=mode,
+                        with_locations=with_locations,
+                        run_ts=run_ts,
+                        now=now,
+                        branches_schema=branches_schema,
+                        runlog_schema=runlog_schema,
+                        bronze_root=bronze_root,
+                    )
+                    summary["stores"][src] = store_summary
+                    if failure:
+                        failed_stores.append(failure)
+                except Exception as exc:
+                    reason = f"Persistence error ({type(exc).__name__}): {exc}"
+                    print(f"  ✗ {src}: {reason}", flush=True)
+                    summary["stores"][src] = {
+                        "scraped": 0, "unchanged": 0, "inserted": 0,
+                        "updated": 0, "rejected": 0, "branches": 0,
+                        "error": reason,
+                    }
+                    failed_stores.append({"store": src, "reason": reason})
 
-            summary["stores"][src] = {
-                "scraped": res.scraped, "unchanged": res.unchanged, "inserted": res.inserted,
-                "updated": res.updated, "rejected": rejected, "branches": n_branches,
-                "error": item["error"],
-            }
-            flag = "  ✗ " + item["error"][:40] if item["error"] else ""
-            print(f"  {src:<11}{res.scraped:>8,}{res.unchanged:>11,}{res.inserted:>8,}"
-                  f"{res.updated:>8,}{n_branches:>10,}{duration:>8.1f}{flag}")
+        asyncio.run(_scrape_and_flush_incrementally())
 
         if skip_erp:
             print("\n  ERP sync: skipped (--skip-erp)")
@@ -231,6 +317,9 @@ def run_once(
                       ", ".join(f"{k.replace('RAW_', '')}={v:,}" for k, v in erp["status_updates"].items()))
     finally:
         conn.close()
+
+    if failed_stores and not offline:
+        send_failure_alert(failed_stores, run_id=pipeline_run_id, mode=mode)
 
     summary["seconds"] = round(time.monotonic() - t_start, 1)
     print(f"\n  ✅ run complete in {summary['seconds']}s\n")
