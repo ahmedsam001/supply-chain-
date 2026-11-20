@@ -108,12 +108,16 @@ class TwoBExtractor(BaseExtractor):
             return products[: self.max_products]
 
         # Live mode
+        self._consecutive_failures = 0
+        self._circuit_breaker_tripped = False
         if self.department:
             categories = list(DEPARTMENT_URLS.get(self.department, {}).items())
         else:
             categories = list(CATEGORY_URLS.items())
         for cat_name, cat_path in categories:
             if len(all_products) >= self.max_products:
+                break
+            if self._circuit_breaker_tripped:
                 break
 
             next_url: Optional[str] = f"{BASE_URL}{cat_path}"
@@ -135,8 +139,11 @@ class TwoBExtractor(BaseExtractor):
                         cards = parse_category_page(response.text)
 
                     if not cards:
+                        if page_num == 1 and self.record_request_failure(f"empty category {cat_name}"):
+                            log.error("two_b.circuit_breaker.open", category=cat_name)
                         break
 
+                    self.record_request_success()
                     products, observations = self._cards_to_canonical(
                         cards, category=cat_name, source_url=page_url
                     )
@@ -162,6 +169,9 @@ class TwoBExtractor(BaseExtractor):
             except Exception as e:
                 self._errors.append(f"Category {cat_name} failed: {e}")
                 log.error("two_b.category.error", error=str(e))
+                if self.record_request_failure(f"{cat_name}: {type(e).__name__}"):
+                    log.error("two_b.circuit_breaker.open", category=cat_name)
+                    break
 
         self._initial_observations = all_observations
         return all_products
@@ -255,6 +265,10 @@ class TwoBExtractor(BaseExtractor):
             logger.info("two_b.locations.offline_fixture", path=str(fixture))
             html = fixture.read_text(encoding="utf-8")
             return parse_store_locator(html, source_id="two_b", source_url=store_url)
+
+        if self._circuit_breaker_tripped:
+            logger.warning("two_b.locations.skipped_circuit_breaker")
+            return []
 
         try:
             response = await self.fetch(store_url)

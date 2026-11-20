@@ -34,7 +34,7 @@ from tenacity import (
     retry,
     stop_after_attempt,
     wait_exponential,
-    retry_if_exception_type,
+    retry_if_exception,
 )
 
 from compliance.compliance_check import ComplianceChecker
@@ -103,9 +103,22 @@ class ExtractionError(Exception):
     pass
 
 
+class CircuitBreakerOpenError(ExtractionError):
+    """Raised when consecutive failures trip the fail-fast circuit breaker."""
+    pass
+
+
 class ComplianceError(Exception):
     """Raised when a source fails compliance checks."""
     pass
+
+
+def _is_retryable_fetch_error(exc: BaseException) -> bool:
+    """Retry transient network/timeout/5xx/429 errors, but fail fast on 403/404."""
+    if isinstance(exc, httpx.HTTPStatusError):
+        status = exc.response.status_code if exc.response is not None else 0
+        return status in (408, 429, 500, 502, 503, 504)
+    return isinstance(exc, (httpx.HTTPError, TimeoutError))
 
 
 def save_raw_snapshot_bytes(
@@ -222,6 +235,32 @@ class BaseExtractor(ABC):
         self._replay_snapshots: dict[str, dict] = {}
         self._replay_ordered: list[dict] = []
         self._replay_cursor: int = 0
+        self._consecutive_failures: int = 0
+        self._circuit_breaker_threshold: int = 3
+        self._circuit_breaker_tripped: bool = False
+
+    def record_request_success(self) -> None:
+        """Reset consecutive failure counter after a healthy page/response."""
+        self._consecutive_failures = 0
+
+    def record_request_failure(self, reason: str) -> bool:
+        """Increment consecutive failure counter; return True when circuit breaker trips."""
+        self._consecutive_failures += 1
+        if self._consecutive_failures >= self._circuit_breaker_threshold:
+            self._circuit_breaker_tripped = True
+            msg = (
+                f"Circuit breaker tripped after {self._consecutive_failures} consecutive "
+                f"failures ({reason}) — aborting store scrape fail-fast."
+            )
+            self._errors.append(msg)
+            logger.error(
+                "circuit_breaker.tripped",
+                consecutive_failures=self._consecutive_failures,
+                reason=reason,
+                run_id=self.run_id,
+            )
+            return True
+        return False
 
     # ─── Abstract interface ───────────────────────────────────────
 
@@ -607,7 +646,8 @@ class BaseExtractor(ABC):
     @retry(
         stop=stop_after_attempt(2),
         wait=wait_exponential(multiplier=1.5, min=2, max=10),
-        retry=retry_if_exception_type((httpx.HTTPError, TimeoutError)),
+        retry=retry_if_exception(_is_retryable_fetch_error),
+        reraise=True,
     )
     async def fetch(self, url: str) -> httpx.Response:
         """
@@ -694,6 +734,15 @@ class BaseExtractor(ABC):
                 await asyncio.sleep(effective_delay)
                 continue
             break
+
+        if response.status_code >= 400:
+            log.warning(
+                "fetch.http_error",
+                status_code=response.status_code,
+                server=response.headers.get("server"),
+                cf_ray=response.headers.get("cf-ray"),
+                elapsed_ms=elapsed_ms,
+            )
 
         response.raise_for_status()
 

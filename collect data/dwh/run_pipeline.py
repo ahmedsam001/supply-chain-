@@ -105,9 +105,16 @@ async def _scrape_one(
             )
             out.update(products=products, observations=observations, locations=locations,
                        quality_score=qscore)
+            meta_errors = meta.get("errors") or data.get("errors") or []
+            if any("circuit breaker" in str(e).lower() for e in meta_errors):
+                out["circuit_breaker"] = True
         except Exception as exc:  # one broken store must not abort the run
             out["error"] = f"{type(exc).__name__}: {exc}"
             print(f"  ✗ {source_id}: extraction failed — {out['error']}")
+
+        if out.get("circuit_breaker"):
+            print(f"  ⛔ {source_id}: circuit breaker tripped — skipping full-store retry.")
+            break
 
         if not offline and attempt == 1 and (out["error"] or len(out["products"]) == 0):
             print(f"  ⚠️  {source_id}: 0 products on attempt 1 ({out['error'] or 'empty result'}) — retrying once...")

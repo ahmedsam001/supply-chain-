@@ -134,7 +134,17 @@ class JumiaExtractor(BaseExtractor):
             )
 
         resp = await self._playwright_page.goto(url, wait_until="domcontentloaded", timeout=30000)
-        await asyncio.sleep(random.uniform(0.8, 1.6))
+        if resp is not None and resp.status >= 400:
+            headers = resp.headers or {}
+            logger.warning(
+                "jumia.fetch.http_error",
+                url=url,
+                status_code=resp.status,
+                server=headers.get("server"),
+                cf_ray=headers.get("cf-ray"),
+            )
+            raise ExtractionError(f"HTTP {resp.status} for {url}")
+        await asyncio.sleep(random.uniform(1.0, 2.2))
         return await self._playwright_page.content()
 
     def source_config(self) -> Source:
@@ -224,18 +234,20 @@ class JumiaExtractor(BaseExtractor):
 
         page_limit = min(self.max_pages, MAX_PAGES_PER_CATEGORY)
 
-        consecutive_empty_cats = 0
+        self._consecutive_failures = 0
+        self._circuit_breaker_tripped = False
         for cat_name, cat_path in categories_to_crawl:
             if len(all_products) >= self.max_products:
                 logger.info("jumia.max_products_reached", count=len(all_products))
                 break
-            if consecutive_empty_cats >= 4 and len(all_products) >= self.max_products:
-                logger.info("jumia.consecutive_empty_cats_limit", extracted_total=len(all_products))
+            if self._circuit_breaker_tripped:
+                logger.error("jumia.circuit_breaker.open", extracted_total=len(all_products))
                 break
 
             log = logger.bind(category=cat_name, department=self.department or "all")
             log.info("jumia.category.start", path=cat_path)
             cat_extracted = 0
+            cat_error: Optional[str] = None
 
             for page_num in range(1, page_limit + 1):
                 if len(all_products) >= self.max_products:
@@ -322,14 +334,18 @@ class JumiaExtractor(BaseExtractor):
                         break
 
                 except Exception as e:
+                    cat_error = f"{type(e).__name__}: {e}"
                     self._errors.append(f"Jumia page {page_num} error: {e}")
                     log.warning("jumia.page.error", page=page_num, error=str(e))
                     break
 
             if cat_extracted == 0:
-                consecutive_empty_cats += 1
+                reason = cat_error or f"empty category {cat_name}"
+                if self.record_request_failure(reason):
+                    log.error("jumia.circuit_breaker.open", category=cat_name, reason=reason)
+                    break
             else:
-                consecutive_empty_cats = 0
+                self.record_request_success()
 
         return all_products
 
