@@ -2,8 +2,8 @@ name: Retail Lakehouse Pipeline
 
 on:
   schedule:
-    - cron: "0 * * * *"
-    - cron: "0 2 * * *"
+    - cron: "17 * * * *"
+    - cron: "17 2 * * *"
   workflow_dispatch:
     inputs:
       mode:
@@ -56,7 +56,7 @@ jobs:
 
       - name: Determine mode and run pipeline
         run: |
-          if [[ "${{ github.event.schedule }}" == "0 2 * * *" || "${{ inputs.mode }}" == "daily" ]]; then
+          if [[ "${{ github.event.schedule }}" == "17 2 * * *" || "${{ inputs.mode }}" == "daily" ]]; then
             MODE=daily
           else
             MODE=hourly
@@ -89,3 +89,6 @@ jobs:
           with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as fh:
               fh.write("\n".join(lines) + "\n")
           PY
+
+      - name: Post-upload data quality guard (silent failure check)
+        run: python dwh/check_run_health.py
