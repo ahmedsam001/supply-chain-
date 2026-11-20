@@ -50,6 +50,7 @@ if str(PROJECT_ROOT) not in sys.path:
 try:  # optional: pick up MAX_PRODUCTS_PER_SOURCE etc. from .env
     from dotenv import load_dotenv
     load_dotenv(PROJECT_ROOT / ".env")
+    load_dotenv(PROJECT_ROOT.parent / ".env")
 except Exception:  # pragma: no cover
     pass
 

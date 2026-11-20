@@ -1,0 +1,11 @@
+transformations:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: retail_lakehouse_dbt.duckdb
+      extensions:
+        - azure
+        - parquet
+      settings:
+        azure_storage_connection_string: "{{ env_var('AZURE_STORAGE_CONNECTION_STRING', '') }}"

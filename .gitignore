@@ -32,6 +32,11 @@ data/raw_snapshots/
 data/observation_history/
 data/manifests/
 
+# dbt artifacts
+target/
+dbt_packages/
+dbt_modules/
+
 # Logs & Databases
 logs/
 *.log
@@ -41,6 +46,10 @@ logs/
 *.duckdb.tmp
 dwh/*.duckdb
 dwh/archive/
+data_collection/dwh/*.duckdb
+data_collection/dwh/archive/
+data_collection/data/local_bronze/
+data/local_bronze/
 airflow/
 audit_outputs/
 .system_generated/

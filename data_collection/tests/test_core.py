@@ -488,7 +488,13 @@ class TestSnapshotInfrastructure:
 
     def test_replay_yields_identical_canonical_output(self):
         """WP2: Replaying stored snapshots with no network yields identical canonical output."""
-        from scripts.live_smoke import replay_run
+        from pathlib import Path
+        import pytest
+        from scripts.live_smoke import DATA_DIR, replay_run
+
+        snapshot_dir = DATA_DIR / "raw_snapshots" / "jumia" / "live_20260928_wp1"
+        if not snapshot_dir.exists():
+            pytest.skip("Stored raw snapshot live_20260928_wp1 not present in checkout (gitignored)")
 
         _, res1 = replay_run("jumia", "live_20260928_wp1", limit=6)
         _, res2 = replay_run("jumia", "live_20260928_wp1", limit=6)

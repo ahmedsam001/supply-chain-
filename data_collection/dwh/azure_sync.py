@@ -28,6 +28,7 @@ HASH_BLOB = "latest_market_hashes.parquet"
 try:
     from dotenv import load_dotenv
     load_dotenv(PROJECT_ROOT / ".env")
+    load_dotenv(PROJECT_ROOT.parent / ".env")
 except Exception:  # pragma: no cover
     pass
 

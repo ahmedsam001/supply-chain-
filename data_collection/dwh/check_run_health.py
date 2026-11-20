@@ -63,6 +63,16 @@ def evaluate_run_health(
     expected_stores: Optional[list[str]] = None,
 ) -> HealthReport:
     if not db_path.exists():
+        for candidate in (
+            Path("data_collection/dwh/retail_lakehouse_fresh.duckdb"),
+            Path("dwh/retail_lakehouse_fresh.duckdb"),
+            DEFAULT_DB_PATH,
+        ):
+            if candidate.exists():
+                db_path = candidate
+                break
+
+    if not db_path.exists():
         return HealthReport(
             ok=False,
             run_label="missing-db",
