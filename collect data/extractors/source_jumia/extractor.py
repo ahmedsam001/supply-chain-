@@ -17,6 +17,7 @@ from typing import Optional
 from urllib.parse import urljoin
 
 import structlog
+from curl_cffi import requests as curl_requests
 
 from extractors.base import (
     BaseExtractor,
@@ -107,9 +108,18 @@ class JumiaExtractor(BaseExtractor):
         await super()._cleanup()
 
     async def _fetch_html(self, url: str) -> str:
-        """Fetch Jumia HTML using Playwright Chrome for resilience against Cloudflare."""
+        """Fetch Jumia HTML with curl_cffi, falling back to Chrome for Cloudflare challenges."""
+        try:
+            response = await self.fetch(url)
+            return response.text
+        except curl_requests.exceptions.HTTPError as exc:
+            status = getattr(exc.response, "status_code", 0)
+            if status != 403:
+                raise
+
         if not self._playwright_browser:
             from playwright.async_api import async_playwright
+
             self._playwright_cm = async_playwright()
             self._playwright = await self._playwright_cm.start()
             chrome_bin = "/usr/bin/google-chrome" if Path("/usr/bin/google-chrome").exists() else None
@@ -133,18 +143,14 @@ class JumiaExtractor(BaseExtractor):
                 },
             )
 
-        resp = await self._playwright_page.goto(url, wait_until="domcontentloaded", timeout=30000)
+        resp = await self._playwright_page.goto(
+            url,
+            wait_until="domcontentloaded",
+            timeout=30000,
+        )
         if resp is not None and resp.status >= 400:
-            headers = resp.headers or {}
-            logger.warning(
-                "jumia.fetch.http_error",
-                url=url,
-                status_code=resp.status,
-                server=headers.get("server"),
-                cf_ray=headers.get("cf-ray"),
-            )
             raise ExtractionError(f"HTTP {resp.status} for {url}")
-        await asyncio.sleep(random.uniform(1.0, 2.2))
+        await asyncio.sleep(random.uniform(1.5, 3.5))
         return await self._playwright_page.content()
 
     def source_config(self) -> Source:
@@ -383,8 +389,8 @@ class JumiaExtractor(BaseExtractor):
 
         try:
             now = datetime.now(timezone.utc)
-            response = await self.fetch(product.product_url)
-            details = parse_product_detail_page(response.text, BASE_URL)
+            html = await self._fetch_html(product.product_url)
+            details = parse_product_detail_page(html, BASE_URL)
 
             # Enrich product model if fields were missing
             if details.get("sku") and not product.sku:

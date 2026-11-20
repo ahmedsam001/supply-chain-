@@ -29,6 +29,7 @@ from urllib.parse import urlparse
 from uuid import uuid4
 
 import httpx
+from curl_cffi import requests as curl_requests
 import structlog
 from tenacity import (
     retry,
@@ -118,6 +119,15 @@ def _is_retryable_fetch_error(exc: BaseException) -> bool:
     if isinstance(exc, httpx.HTTPStatusError):
         status = exc.response.status_code if exc.response is not None else 0
         return status in (408, 429, 500, 502, 503, 504)
+    if isinstance(exc, curl_requests.exceptions.HTTPError):
+        response = getattr(exc, "response", None)
+        status = getattr(response, "status_code", 0)
+        return status in (408, 429, 500, 502, 503, 504)
+    if isinstance(exc, (
+        curl_requests.exceptions.Timeout,
+        curl_requests.exceptions.ConnectionError,
+    )):
+        return True
     return isinstance(exc, (httpx.HTTPError, TimeoutError))
 
 
@@ -225,7 +235,7 @@ class BaseExtractor(ABC):
         self._browser = None
         self._context = None
         self._page = None
-        self._http_client: Optional[httpx.AsyncClient] = None
+        self._http_client: Optional[curl_requests.AsyncSession] = None
         self._request_count = 0
         self._start_time: Optional[float] = None
         self._errors: list[str] = []
@@ -560,14 +570,14 @@ class BaseExtractor(ABC):
         logger.info("browser.launched", headless=self.headless, run_id=self.run_id, proxy=bool(proxy_url))
 
     async def _init_http_client(self):
-        """Initialize httpx async client for non-browser requests with optional proxy."""
+        """Initialize curl_cffi async client with browser impersonation and optional proxy."""
         proxy = os.getenv("PROXY_URL") or os.getenv("HTTPS_PROXY") or os.getenv("HTTP_PROXY") or None
-        self._http_client = httpx.AsyncClient(
-            http2=True,
+        self._http_client = curl_requests.AsyncSession(
             proxy=proxy,
             timeout=15.0,
-            follow_redirects=True,
+            allow_redirects=True,
             headers=get_rotated_headers(),
+            impersonate="chrome116",
         )
 
     async def _init_client(self, source: Source):
@@ -592,7 +602,7 @@ class BaseExtractor(ABC):
             await self._playwright.stop()
             self._playwright = None
         if self._http_client:
-            await self._http_client.aclose()
+            await self._http_client.close()
             self._http_client = None
         logger.info("resources.cleaned_up", run_id=self.run_id)
 
@@ -607,8 +617,12 @@ class BaseExtractor(ABC):
         if source is None:
             source = self.source_config()
 
-        min_d = max(1.5, min(source.min_delay_seconds, 2.5))
-        max_d = max(3.5, min(source.max_delay_seconds, 4.5))
+        if source.source_id in ("jumia", "two_b"):
+            min_d = source.min_delay_seconds
+            max_d = source.max_delay_seconds
+        else:
+            min_d = max(1.5, min(source.min_delay_seconds, 2.5))
+            max_d = max(3.5, min(source.max_delay_seconds, 4.5))
         delay = random.uniform(min_d, max_d)
         await asyncio.sleep(delay)
         self._request_count += 1
@@ -651,7 +665,7 @@ class BaseExtractor(ABC):
     )
     async def fetch(self, url: str) -> httpx.Response:
         """
-        Fetch URL with httpx (or replay from stored snapshot if replay_run_id is set).
+        Fetch URL with curl_cffi browser impersonation (or replay a stored snapshot).
         Enforces live robots.txt disallow rules (WP9), rotates User-Agent/Accept-Language/Referer
         headers on every request, applies smart exponential backoff (10s, 20s, 40s, 80s + jitter)
         on HTTP 429/503, and saves raw gzip snapshot (WP2).
@@ -702,7 +716,13 @@ class BaseExtractor(ABC):
         for attempt in range(len(backoff_schedule) + 1):
             req_headers = get_rotated_headers(url)
             t0 = time.monotonic()
-            response = await self._http_client.get(url, headers=req_headers)
+            response = await self._http_client.get(
+                url,
+                headers=req_headers,
+                timeout=15.0,
+                allow_redirects=True,
+                impersonate="chrome116",
+            )
             elapsed_ms = int((time.monotonic() - t0) * 1000)
 
             if self._manifest:

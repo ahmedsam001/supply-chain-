@@ -2,6 +2,7 @@
 # Browser automation / scraping
 playwright>=1.48.0
 httpx[http2]>=0.27.0
+curl_cffi>=0.7.0
 beautifulsoup4>=4.12.0
 lxml>=5.3.0
 

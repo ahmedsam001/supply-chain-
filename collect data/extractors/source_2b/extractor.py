@@ -286,6 +286,9 @@ class TwoBExtractor(BaseExtractor):
                 block_resp = await self._http_client.post(
                     block_url,
                     headers={"X-Requested-With": "XMLHttpRequest"},
+                    timeout=15.0,
+                    allow_redirects=True,
+                    impersonate="chrome116",
                 )
                 self._request_count += 1
                 if block_resp.status_code == 200 and block_resp.text.strip():
