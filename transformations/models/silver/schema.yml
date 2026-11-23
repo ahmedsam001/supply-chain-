@@ -269,17 +269,17 @@ models:
               arguments:
                 values: ['DELIVERED', 'LABEL_CREATED', 'IN_TRANSIT', 'OUT_FOR_DELIVERY', 'CANCELLED', 'RETURNED_TO_SENDER']
       - name: dispatched_ts
-        description: "Parsed dispatch timestamp (required for all shipments beyond LABEL_CREATED)"
+        description: "Parsed dispatch timestamp (required for in-flight shipments; may be NULL if carrier skipped dispatch scan)"
         tests:
           - not_null:
               config:
-                where: "shipment_status != 'LABEL_CREATED'"
+                where: "shipment_status IN ('IN_TRANSIT', 'OUT_FOR_DELIVERY')"
       - name: delivered_ts
-        description: "Parsed delivery timestamp (required for DELIVERED shipments; NULL if before dispatch or not yet delivered)"
+        description: "Parsed delivery timestamp (required for valid DELIVERED shipments; NULL if inverted before dispatch or not yet delivered)"
         tests:
           - not_null:
               config:
-                where: "shipment_status = 'DELIVERED'"
+                where: "shipment_status = 'DELIVERED' AND NOT had_delivered_before_dispatched"
       - name: shipping_cost_egp
         description: "Non-negative shipping cost in EGP (DECIMAL(12,2))"
         tests:

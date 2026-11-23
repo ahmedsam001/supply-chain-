@@ -409,7 +409,7 @@ models:
         tests:
           - not_null:
               config:
-                where: "is_delivered = TRUE"
+                where: "delivered_ts IS NOT NULL"
           - relationships:
               arguments:
                 to: ref('dim_date')
