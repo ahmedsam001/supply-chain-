@@ -98,7 +98,11 @@ cleaned AS (
         CASE
             WHEN d.parsed_delivered_ts IS NULL AND d.DELIVERED_TS_RAW IS NOT NULL
             THEN TRUE ELSE FALSE
-        END                                                             AS is_delivered_ts_unparseable
+        END                                                             AS is_delivered_ts_unparseable,
+        CASE
+            WHEN d.parsed_delivered_ts > CURRENT_TIMESTAMP
+            THEN TRUE ELSE FALSE
+        END                                                             AS is_future_delivery_ts
 
     FROM deduped d
     LEFT JOIN gov_mapping m
