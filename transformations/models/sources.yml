@@ -1,0 +1,25 @@
+version: 2
+
+sources:
+  - name: supply_chain_stage
+    schema: supply_chain_stage
+    tables:
+      - name: RAW_CUSTOMER_ORDERS
+      - name: RAW_INVENTORY_LOGS
+      - name: RAW_ORDER_ITEMS
+      - name: RAW_PO_LINES
+      - name: RAW_PURCHASE_ORDERS
+      - name: RAW_SHIPMENTS
+      - name: RAW_SUPPLIERS
+      - name: RAW_WAREHOUSES
+
+  - name: live_market
+    schema: live_market
+    tables:
+      - name: PRODUCTS
+      - name: PRICE_HISTORY
+      - name: BRANCHES
+      - name: RUN_LOGS
+      - name: MARKET_SNAPSHOTS
+      - name: STORES
+      

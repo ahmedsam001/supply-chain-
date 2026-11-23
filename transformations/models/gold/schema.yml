@@ -1,0 +1,700 @@
+version: 2
+
+models:
+  # ============================================================================
+  # CONFORMED DIMENSIONS (7)
+  # ============================================================================
+
+  - name: dim_date
+    description: "Conformed Gold calendar dimension (2024-01-01 to 2027-12-31) with Egypt weekend flags (Fri/Sat)."
+    columns:
+      - name: date_key
+        description: "Integer surrogate date key (YYYYMMDD)"
+        tests:
+          - unique
+          - not_null
+      - name: full_date
+        description: "Calendar date"
+        tests:
+          - unique
+          - not_null
+      - name: year
+        tests: [not_null]
+      - name: quarter
+        tests: [not_null]
+      - name: month
+        tests: [not_null]
+      - name: is_egypt_weekend
+        tests: [not_null]
+
+  - name: dim_store
+    description: "Conformed Gold retailer dimension sourced from slv_stores."
+    columns:
+      - name: store_id
+        description: "Uppercase retail store primary key"
+        tests:
+          - unique
+          - not_null
+      - name: store_name
+        tests: [not_null]
+      - name: domain
+        tests: [not_null]
+      - name: business_type
+        tests: [not_null]
+
+  - name: dim_branch
+    description: "Conformed Gold physical retail branch dimension across Egypt's 27 governorates."
+    columns:
+      - name: branch_id
+        description: "Physical branch primary key"
+        tests:
+          - unique
+          - not_null
+      - name: store_id
+        description: "Retailer foreign key to dim_store"
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_store')
+                field: store_id
+      - name: branch_name
+        tests: [not_null]
+      - name: governorate
+        tests: [not_null]
+
+  - name: dim_warehouse
+    description: "Conformed Gold distribution center and warehouse dimension."
+    columns:
+      - name: warehouse_id
+        description: "Warehouse primary key"
+        tests:
+          - unique
+          - not_null
+      - name: warehouse_name
+        tests: [not_null]
+      - name: warehouse_type
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['REGIONAL_DEPOT', 'CENTRAL_DC', 'COLD_CHAIN_DC']
+      - name: governorate
+        tests: [not_null]
+      - name: capacity_pallets
+        tests: [not_null]
+      - name: cold_chain_enabled
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Y', 'N']
+
+  - name: dim_supplier
+    description: "Conformed Gold B2B supplier dimension."
+    columns:
+      - name: supplier_id
+        description: "Supplier primary key"
+        tests:
+          - unique
+          - not_null
+      - name: supplier_name
+        tests: [not_null]
+      - name: archetype_code
+        tests: [not_null]
+      - name: rating
+        tests: [not_null]
+      - name: active_flag
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['ACTIVE', 'INACTIVE']
+      - name: created_at
+        tests: [not_null]
+
+  - name: dim_customer
+    description: "Conformed Gold customer dimension derived from cleaned order history."
+    columns:
+      - name: customer_id
+        description: "Customer primary key"
+        tests:
+          - unique
+          - not_null
+      - name: primary_governorate
+        tests: [not_null]
+      - name: preferred_channel
+        tests: [not_null]
+      - name: preferred_payment_method
+        tests: [not_null]
+      - name: first_order_date
+        tests: [not_null]
+      - name: last_order_date
+        tests: [not_null]
+      - name: lifetime_orders
+        tests: [not_null]
+      - name: lifetime_spend_egp
+        tests: [not_null]
+
+  - name: dim_product
+    description: "Conformed Gold SCD Type 2 product dimension sourced from slv_products with Infinity Date valid_to."
+    columns:
+      - name: product_sk
+        description: "Deterministic SCD Type 2 surrogate primary key"
+        tests:
+          - unique
+          - not_null
+      - name: product_id
+        description: "Natural product identifier"
+        tests:
+          - unique
+          - not_null
+      - name: store_id
+        description: "Conformed uppercase store foreign key"
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_store')
+                field: store_id
+      - name: product_name
+        tests: [not_null]
+      - name: category
+        tests: [not_null]
+      - name: category_group
+        tests: [not_null]
+      - name: brand
+        tests: [not_null]
+      - name: current_price
+        tests:
+          - not_null:
+              config:
+                where: "NOT is_price_outlier"
+      - name: stock_status
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['IN_STOCK', 'OUT_OF_STOCK', 'LOW_STOCK_SIGNAL']
+      - name: valid_from
+        tests: [not_null]
+      - name: valid_to
+        tests: [not_null]
+      - name: is_current
+        tests: [not_null]
+
+  - name: dim_order_details
+    description: "Junk dimension grouping order transaction attributes (channel, payment method, status)."
+    columns:
+      - name: order_details_key
+        tests:
+          - unique
+          - not_null
+      - name: order_channel
+        tests: [not_null]
+      - name: payment_method
+        tests: [not_null]
+      - name: order_status
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['DELIVERED', 'CANCELLED', 'PROCESSING', 'SHIPPED', 'COMPLETED']
+
+  - name: dim_shipment_details
+    description: "Junk dimension grouping shipment attributes (carrier, shipment type, status, destination governorate)."
+    columns:
+      - name: shipment_details_key
+        tests:
+          - unique
+          - not_null
+      - name: carrier_name
+        tests: [not_null]
+      - name: shipment_type
+        tests: [not_null]
+      - name: shipment_status
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['DELIVERED', 'LABEL_CREATED', 'IN_TRANSIT', 'OUT_FOR_DELIVERY', 'CANCELLED', 'RETURNED_TO_SENDER']
+      - name: destination_gov
+        tests: [not_null]
+
+  - name: dim_po_details
+    description: "Junk dimension grouping purchase order status and currency attributes."
+    columns:
+      - name: po_details_key
+        tests:
+          - unique
+          - not_null
+      - name: po_status
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['CLOSED', 'RECEIVED', 'APPROVED', 'PENDING_DELIVERY', 'IN_TRANSIT']
+      - name: currency
+        tests: [not_null]
+
+  - name: dim_inventory_status
+    description: "Junk dimension grouping inventory location type and stock status."
+    columns:
+      - name: inventory_status_key
+        tests:
+          - unique
+          - not_null
+      - name: location_type
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['WAREHOUSE', 'STORE_BRANCH']
+      - name: stock_status
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['IN_STOCK', 'OUT_OF_STOCK', 'LOW_STOCK', 'REORDER_NEEDED']
+
+  - name: dim_market_status
+    description: "Junk dimension grouping live market snapshot stock status and CDC change type."
+    columns:
+      - name: market_status_key
+        tests:
+          - unique
+          - not_null
+      - name: stock_status
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['IN_STOCK', 'OUT_OF_STOCK', 'LOW_STOCK_SIGNAL']
+      - name: change_type
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['INSERT', 'UPDATE', 'NO_CHANGE']
+
+  - name: dim_price_event_status
+    description: "Junk dimension grouping price change event status, CDC change type, and price direction."
+    columns:
+      - name: price_event_status_key
+        tests:
+          - unique
+          - not_null
+      - name: stock_status
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['IN_STOCK', 'OUT_OF_STOCK', 'LOW_STOCK_SIGNAL']
+      - name: change_type
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['INSERT', 'UPDATE']
+      - name: price_direction
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['NEW_LISTING', 'PRICE_DROP', 'PRICE_INCREASE', 'UNCHANGED', 'OUTLIER_FLAGGED']
+
+  # ============================================================================
+  # FACT TABLES (6 — GALAXY SCHEMA / FACT CONSTELLATION)
+  # ============================================================================
+
+  - name: fct_sales
+    description: "Gold B2C Sales transaction fact table at order line-item grain (1 row per order_item_id)."
+    columns:
+      - name: order_item_id
+        tests:
+          - unique
+          - not_null
+      - name: order_id
+        tests: [not_null]
+      - name: date_key
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+      - name: product_sk
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_product')
+                field: product_sk
+      - name: product_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_product')
+                field: product_id
+      - name: store_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_store')
+                field: store_id
+      - name: branch_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_branch')
+                field: branch_id
+      - name: customer_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_customer')
+                field: customer_id
+      - name: order_details_key
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_order_details')
+                field: order_details_key
+      - name: order_ts
+        tests: [not_null]
+      - name: quantity
+        tests: [not_null]
+      - name: gross_sales_egp
+        tests: [not_null]
+      - name: net_revenue_egp
+        tests: [not_null]
+      - name: total_cost_egp
+        tests: [not_null]
+      - name: gross_profit_egp
+        tests: [not_null]
+
+  - name: fct_shipments
+    description: "Gold Logistics accumulating snapshot fact at shipment grain (1 row per shipment_id) with SLA & lead-time KPIs."
+    columns:
+      - name: shipment_id
+        tests:
+          - unique
+          - not_null
+      - name: order_id
+        tests: [not_null]
+      - name: order_date_key
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+      - name: dispatched_date_key
+        tests:
+          - not_null:
+              config:
+                where: "dispatched_ts IS NOT NULL"
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+              config:
+                where: "dispatched_date_key IS NOT NULL"
+      - name: delivered_date_key
+        tests:
+          - not_null:
+              config:
+                where: "is_delivered = TRUE"
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+              config:
+                where: "delivered_date_key IS NOT NULL"
+      - name: store_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_store')
+                field: store_id
+      - name: warehouse_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_warehouse')
+                field: warehouse_id
+      - name: branch_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_branch')
+                field: branch_id
+      - name: customer_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_customer')
+                field: customer_id
+      - name: shipment_details_key
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_shipment_details')
+                field: shipment_details_key
+      - name: shipping_cost_egp
+        tests: [not_null]
+      - name: is_delivered
+        tests: [not_null]
+
+  - name: fct_procurement
+    description: "Gold B2B Procurement transaction fact at PO line grain (1 row per po_line_id) with fill-rate and lead-time KPIs."
+    columns:
+      - name: po_line_id
+        tests:
+          - unique
+          - not_null
+      - name: po_id
+        tests: [not_null]
+      - name: order_date_key
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+      - name: expected_delivery_date_key
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+      - name: product_sk
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_product')
+                field: product_sk
+      - name: product_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_product')
+                field: product_id
+      - name: store_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_store')
+                field: store_id
+      - name: supplier_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_supplier')
+                field: supplier_id
+      - name: warehouse_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_warehouse')
+                field: warehouse_id
+      - name: po_details_key
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_po_details')
+                field: po_details_key
+      - name: ordered_qty
+        tests: [not_null]
+      - name: received_qty
+        tests: [not_null]
+      - name: line_total_egp
+        tests: [not_null]
+
+  - name: fct_inventory_snapshots
+    description: "Gold Semi-Additive Periodic Inventory Snapshot fact (1 row per product x location x snapshot)."
+    columns:
+      - name: inv_log_id
+        tests:
+          - unique
+          - not_null
+      - name: date_key
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+      - name: product_sk
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_product')
+                field: product_sk
+      - name: product_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_product')
+                field: product_id
+      - name: store_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_store')
+                field: store_id
+      - name: warehouse_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_warehouse')
+                field: warehouse_id
+              config:
+                where: "warehouse_id IS NOT NULL"
+      - name: branch_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_branch')
+                field: branch_id
+              config:
+                where: "branch_id IS NOT NULL"
+      - name: inventory_status_key
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_inventory_status')
+                field: inventory_status_key
+      - name: qty_on_hand
+        tests: [not_null]
+      - name: available_qty
+        tests: [not_null]
+      - name: is_stockout
+        tests: [not_null]
+
+  - name: fct_market_snapshots
+    description: "Gold Periodic Snapshot fact capturing full live market pricing and stock state across all 6 Egyptian retailers."
+    columns:
+      - name: snapshot_id
+        tests:
+          - unique
+          - not_null
+      - name: date_key
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+      - name: product_sk
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_product')
+                field: product_sk
+      - name: product_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_product')
+                field: product_id
+      - name: store_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_store')
+                field: store_id
+      - name: market_status_key
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_market_status')
+                field: market_status_key
+      - name: price
+        tests:
+          - not_null:
+              config:
+                where: "NOT is_price_outlier"
+      - name: discount_pct
+        tests: [not_null]
+      - name: is_discounted
+        tests: [not_null]
+      - name: is_in_stock
+        tests: [not_null]
+
+  - name: fct_price_changes
+    description: "Gold Transaction Fact capturing ONLY price/listing delta events (INSERT/UPDATE) for volatility and alert analysis."
+    columns:
+      - name: snapshot_id
+        tests:
+          - unique
+          - not_null
+      - name: date_key
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+      - name: product_sk
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_product')
+                field: product_sk
+      - name: product_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_product')
+                field: product_id
+      - name: store_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_store')
+                field: store_id
+      - name: price_event_status_key
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_price_event_status')
+                field: price_event_status_key
+      - name: price
+        tests:
+          - not_null:
+              config:
+                where: "NOT is_price_outlier"
+      - name: price_delta_egp
+        tests: [not_null]
+      - name: price_delta_pct
+        tests: [not_null]

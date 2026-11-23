@@ -18,6 +18,6 @@ clean-targets:
 models:
   transformations:
     silver:
-      +materialized: view
+      +materialized: table
     gold:
       +materialized: table

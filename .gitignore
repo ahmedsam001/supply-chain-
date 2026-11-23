@@ -49,7 +49,11 @@ dwh/archive/
 data_collection/dwh/*.duckdb
 data_collection/dwh/archive/
 data_collection/data/local_bronze/
+data_collection/data/local_silver/
+data_collection/data/local_gold/
 data/local_bronze/
+data/local_silver/
+data/local_gold/
 airflow/
 audit_outputs/
 .system_generated/

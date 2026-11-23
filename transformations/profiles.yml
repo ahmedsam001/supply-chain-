@@ -3,9 +3,10 @@ transformations:
   outputs:
     dev:
       type: duckdb
-      path: retail_lakehouse_dbt.duckdb
+      path: '../data_collection/dwh/retail_lakehouse_fresh.duckdb'
       extensions:
         - azure
         - parquet
+        - httpfs
       settings:
         azure_storage_connection_string: "{{ env_var('AZURE_STORAGE_CONNECTION_STRING', '') }}"

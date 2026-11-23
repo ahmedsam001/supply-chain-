@@ -1,0 +1,617 @@
+version: 2
+
+models:
+  - name: slv_customer_orders
+    description: "Conformed & cleaned customer orders with chronological deduplication, multi-format timestamp parsing & shipment fallback, standardized governorate imputation, reconciled DECIMAL(12,2) financials, and DQ flags."
+    columns:
+      - name: order_id
+        description: "Unique order identifier (PK)"
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        description: "Customer identifier"
+        tests:
+          - not_null
+      - name: store
+        description: "Store name / brand"
+        tests:
+          - not_null
+      - name: customer_governorate
+        description: "Standardized Egyptian governorate mapped via locations_mapping with slv_branches fallback"
+        tests:
+          - not_null
+      - name: order_channel
+        description: "Standardized uppercase order channel"
+        tests:
+          - not_null
+      - name: payment_method
+        description: "Standardized uppercase payment method"
+        tests:
+          - not_null
+      - name: order_status
+        description: "Standardized uppercase order status"
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['DELIVERED', 'CANCELLED', 'PROCESSING', 'SHIPPED', 'COMPLETED']
+      - name: order_ts
+        description: "Parsed order timestamp (handles mixed formats with shipment timestamp & sentinel fallback)"
+        tests:
+          - not_null
+      - name: subtotal_egp
+        description: "Non-negative order subtotal in EGP (DECIMAL(12,2))"
+        tests:
+          - not_null
+      - name: shipping_fee_egp
+        description: "Non-negative shipping fee in EGP (DECIMAL(12,2))"
+        tests:
+          - not_null
+      - name: total_order_egp
+        description: "Validated & reconciled order total in EGP (DECIMAL(12,2))"
+        tests:
+          - not_null
+
+  - name: slv_inventory_logs
+    description: "Conformed inventory snapshots with multi-format timestamp parsing, non-negative integer quantities, capped reservations, and standardized stock statuses."
+    columns:
+      - name: inv_log_id
+        description: "Inventory log entry identifier (PK)"
+        tests:
+          - unique
+          - not_null
+      - name: product_id
+        description: "Product identifier (FK)"
+        tests:
+          - not_null
+      - name: store
+        description: "Standardized uppercase retail store"
+        tests:
+          - not_null
+      - name: location_type
+        description: "Inventory location type (WAREHOUSE or STORE_BRANCH)"
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['WAREHOUSE', 'STORE_BRANCH']
+      - name: qty_on_hand
+        description: "Non-negative count of physical units on hand"
+        tests:
+          - not_null
+      - name: reserved_qty
+        description: "Reserved units capped at physical units on hand"
+        tests:
+          - not_null
+      - name: reorder_point
+        description: "Reorder threshold quantity"
+        tests:
+          - not_null
+      - name: stock_status
+        description: "Standardized inventory stock status ('OK' unified into 'IN_STOCK')"
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['IN_STOCK', 'OUT_OF_STOCK', 'LOW_STOCK', 'REORDER_NEEDED']
+      - name: snapshot_ts
+        description: "Parsed inventory snapshot timestamp"
+        tests:
+          - not_null
+
+  - name: slv_order_items
+    description: "Conformed line items for customer orders with DECIMAL(12,2) financials and cost-price sanity checks."
+    columns:
+      - name: order_item_id
+        description: "Order line item primary key"
+        tests:
+          - unique
+          - not_null
+      - name: order_id
+        description: "Associated customer order ID (FK)"
+        tests:
+          - not_null
+      - name: product_id
+        description: "Associated product ID (FK)"
+        tests:
+          - not_null
+      - name: store
+        description: "Standardized uppercase retail store"
+        tests:
+          - not_null
+      - name: category
+        description: "Standardized uppercase product category"
+        tests:
+          - not_null
+      - name: quantity
+        description: "Positive purchased quantity"
+        tests:
+          - not_null
+      - name: unit_price_egp
+        description: "Non-negative unit price in EGP (DECIMAL(12,2))"
+        tests:
+          - not_null
+      - name: discount_amount_egp
+        description: "Non-negative discount amount in EGP (DECIMAL(12,2))"
+        tests:
+          - not_null
+      - name: unit_cost_egp
+        description: "Validated unit cost in EGP (NULL if cost exceeds unit price)"
+        tests:
+          - not_null
+      - name: net_unit_price_egp
+        description: "Net unit price after discount in EGP (DECIMAL(12,2))"
+        tests:
+          - not_null
+
+  - name: slv_po_lines
+    description: "Purchase order line items with DECIMAL(12,2) financials, reconciled line totals, and over-receiving caps."
+    columns:
+      - name: po_line_id
+        description: "Purchase order line primary key"
+        tests:
+          - unique
+          - not_null
+      - name: po_id
+        description: "Parent purchase order ID (FK)"
+        tests:
+          - not_null
+      - name: product_id
+        description: "Product identifier (FK)"
+        tests:
+          - not_null
+      - name: store
+        description: "Standardized uppercase retail store"
+        tests:
+          - not_null
+      - name: category
+        description: "Standardized uppercase category"
+        tests:
+          - not_null
+      - name: ordered_qty
+        description: "Quantity ordered from supplier"
+        tests:
+          - not_null
+      - name: received_qty
+        description: "Quantity received (capped at ordered qty)"
+        tests:
+          - not_null
+      - name: unit_cost_egp
+        description: "Unit cost in EGP (DECIMAL(12,2))"
+        tests:
+          - not_null
+      - name: line_total_egp
+        description: "Reconciled PO line total in EGP (DECIMAL(12,2))"
+        tests:
+          - not_null
+
+  - name: slv_purchase_orders
+    description: "Cleaned B2B purchase orders with multi-format timestamp parsing, standardized statuses, and DECIMAL(12,2) totals."
+    columns:
+      - name: po_id
+        description: "Purchase order primary key"
+        tests:
+          - unique
+          - not_null
+      - name: supplier_id
+        description: "Target supplier ID (FK)"
+        tests:
+          - not_null
+      - name: warehouse_id
+        description: "Destination warehouse ID (FK)"
+        tests:
+          - not_null
+      - name: store
+        description: "Standardized uppercase retail store"
+        tests:
+          - not_null
+      - name: po_status
+        description: "Standardized uppercase purchase order status"
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['CLOSED', 'RECEIVED', 'APPROVED', 'PENDING_DELIVERY', 'IN_TRANSIT']
+      - name: order_date
+        description: "Parsed purchase order creation timestamp"
+        tests:
+          - not_null
+      - name: expected_delivery_clean
+        description: "Chronologically validated expected delivery timestamp (NULL if before order date)"
+        tests:
+          - not_null
+      - name: total_amount_egp
+        description: "Non-negative purchase order total in EGP (DECIMAL(12,2))"
+        tests:
+          - not_null
+      - name: currency
+        description: "ISO currency code"
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['EGP']
+
+  - name: slv_shipments
+    description: "Cleaned outbound and fulfillment shipments with multi-format timestamp parsing, standardized governorate & carrier names, DECIMAL(12,2) costs, and temporal sanity checks."
+    columns:
+      - name: shipment_id
+        description: "Shipment primary key"
+        tests:
+          - unique
+          - not_null
+      - name: order_id
+        description: "Associated customer order ID (FK)"
+        tests:
+          - not_null
+      - name: store
+        description: "Standardized uppercase retail store name"
+        tests:
+          - not_null
+      - name: destination_gov
+        description: "Standardized destination governorate mapped via locations_mapping with slv_branches fallback"
+        tests:
+          - not_null
+      - name: carrier_name
+        description: "Standardized uppercase logistics carrier name"
+        tests:
+          - not_null
+      - name: shipment_type
+        description: "Standardized uppercase shipment type (B2C_LAST_MILE / B2B_BRANCH_PICKUP)"
+        tests:
+          - not_null
+      - name: shipment_status
+        description: "Standardized uppercase shipment status"
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['DELIVERED', 'LABEL_CREATED', 'IN_TRANSIT', 'OUT_FOR_DELIVERY', 'CANCELLED', 'RETURNED_TO_SENDER']
+      - name: dispatched_ts
+        description: "Parsed dispatch timestamp (required for all shipments beyond LABEL_CREATED)"
+        tests:
+          - not_null:
+              config:
+                where: "shipment_status != 'LABEL_CREATED'"
+      - name: delivered_ts
+        description: "Parsed delivery timestamp (required for DELIVERED shipments; NULL if before dispatch or not yet delivered)"
+        tests:
+          - not_null:
+              config:
+                where: "shipment_status = 'DELIVERED'"
+      - name: shipping_cost_egp
+        description: "Non-negative shipping cost in EGP (DECIMAL(12,2))"
+        tests:
+          - not_null
+
+  - name: slv_suppliers
+    description: "Active suppliers dimension with multi-format creation timestamps, normalized active_flag, validated ratings & emails, and Infinity Date validity."
+    columns:
+      - name: supplier_id
+        description: "Supplier primary key"
+        tests:
+          - unique
+          - not_null
+      - name: supplier_name
+        description: "Supplier trade name"
+        tests:
+          - not_null
+      - name: supplier_type
+        description: "Standardized uppercase supplier classification"
+        tests:
+          - not_null
+      - name: archetype_code
+        description: "Supply chain archetype code"
+        tests:
+          - not_null
+      - name: currency
+        description: "Supplier billing currency"
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['EGP']
+      - name: rating
+        description: "Supplier rating bounded strictly between 0 and 5 (DECIMAL(12,2))"
+        tests:
+          - not_null
+      - name: contact_email
+        description: "Validated lowercase email address containing @"
+        tests:
+          - not_null
+      - name: active_flag
+        description: "Standardized supplier active status"
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['ACTIVE', 'INACTIVE']
+      - name: created_at
+        description: "Parsed supplier creation timestamp"
+        tests:
+          - not_null
+
+  - name: slv_warehouses
+    description: "Fulfillment centers and warehouses dimension with standardized governorates, Egypt geographic bounds, parsed audit timestamps, and Infinity Date validity."
+    columns:
+      - name: warehouse_id
+        description: "Warehouse primary key"
+        tests:
+          - unique
+          - not_null
+      - name: warehouse_name
+        description: "Warehouse trade name"
+        tests:
+          - not_null
+      - name: warehouse_type
+        description: "Standardized warehouse type"
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['REGIONAL_DEPOT', 'CENTRAL_DC', 'COLD_CHAIN_DC']
+      - name: governorate
+        description: "Standardized Egyptian governorate mapped via locations_mapping"
+        tests:
+          - not_null
+      - name: capacity_pallets
+        description: "Positive pallet storage capacity"
+        tests:
+          - not_null
+      - name: cold_chain_enabled
+        description: "Whether cold-chain storage is enabled (Y/N)"
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Y', 'N']
+      - name: latitude
+        description: "Latitude bounded within Egypt (21 to 32 N)"
+        tests:
+          - not_null
+      - name: longitude
+        description: "Longitude bounded within Egypt (24 to 37 E)"
+        tests:
+          - not_null
+      - name: operational_status
+        description: "Standardized uppercase operational status"
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['ACTIVE', 'OPERATIONAL', 'INACTIVE', 'MAINTENANCE']
+      - name: last_audit_ts
+        description: "Parsed last audit timestamp"
+        tests:
+          - not_null
+
+  - name: slv_products
+    description: "Cleaned product catalog dimension from live retail scrapers with standardized categories & brands, DECIMAL(12,2) pricing, and Infinity Date validity."
+    columns:
+      - name: store
+        description: "Standardized uppercase retail chain source"
+        tests:
+          - not_null
+      - name: product_id
+        description: "Store product SKU / ID (PK)"
+        tests:
+          - unique
+          - not_null
+      - name: product_name
+        description: "Trimmed product title"
+        tests:
+          - not_null
+      - name: category
+        description: "Standardized uppercase product category"
+        tests:
+          - not_null
+      - name: brand
+        description: "Standardized uppercase brand (defaults to UNKNOWN)"
+        tests:
+          - not_null
+      - name: current_price
+        description: "Current retail price in EGP (> 0 and < 1,000,000, DECIMAL(12,2); NULL when flagged as extreme outlier)"
+        tests:
+          - not_null:
+              config:
+                where: "NOT is_price_outlier"
+      - name: discount_pct
+        description: "Discount percentage bounded strictly between 0 and 100 (DECIMAL(12,2))"
+        tests:
+          - not_null
+      - name: stock_status
+        description: "Standardized live stock availability status"
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['IN_STOCK', 'OUT_OF_STOCK', 'LOW_STOCK_SIGNAL']
+      - name: first_seen_at
+        description: "First observation timestamp"
+        tests:
+          - not_null
+      - name: last_updated_at
+        description: "Latest update timestamp"
+        tests:
+          - not_null
+      - name: valid_to
+        description: "Dimension validity end timestamp (9999-12-31 23:59:59 for active products)"
+        tests:
+          - not_null
+
+  - name: slv_price_history
+    description: "Historical price movements and scraper change snapshots with DECIMAL(12,2) pricing."
+    columns:
+      - name: snapshot_id
+        description: "Price observation snapshot primary key"
+        tests:
+          - unique
+          - not_null
+      - name: collected_date
+        description: "Collection calendar date"
+        tests:
+          - not_null
+      - name: store
+        description: "Standardized uppercase retail store name"
+        tests:
+          - not_null
+      - name: product_id
+        description: "Product ID (FK)"
+        tests:
+          - not_null
+      - name: price
+        description: "Validated market price (> 0 and < 1,000,000, DECIMAL(12,2); NULL when flagged as extreme outlier)"
+        tests:
+          - not_null:
+              config:
+                where: "NOT is_price_outlier"
+      - name: discount_pct
+        description: "Discount percentage bounded in [0, 100] (DECIMAL(12,2))"
+        tests:
+          - not_null
+      - name: stock_status
+        description: "Standardized stock availability status"
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['IN_STOCK', 'OUT_OF_STOCK', 'LOW_STOCK_SIGNAL']
+      - name: change_type
+        description: "Observed CDC state delta"
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['INSERT', 'UPDATE', 'NO_CHANGE']
+      - name: collected_at
+        description: "Collection timestamp"
+        tests:
+          - not_null
+
+  - name: slv_branches
+    description: "Physical retail branch network with verified Egypt coordinates."
+    columns:
+      - name: branch_id
+        description: "Physical branch primary key"
+        tests:
+          - unique
+          - not_null
+      - name: store
+        description: "Store / retail brand"
+        tests:
+          - not_null
+      - name: latitude
+        description: "Latitude bounded within Egypt"
+      - name: longitude
+        description: "Longitude bounded within Egypt"
+
+  - name: slv_run_logs
+    description: "Audited pipeline execution logs with non-negative metrics, DECIMAL(12,2) duration, and timestamp checks."
+    columns:
+      - name: run_id
+        description: "Pipeline run execution ID (PK)"
+        tests:
+          - unique
+          - not_null
+      - name: store
+        description: "Standardized uppercase retail chain"
+        tests:
+          - not_null
+      - name: run_mode
+        description: "Pipeline execution cadence"
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['DAILY', 'HOURLY', 'MANUAL']
+      - name: run_date
+        description: "Pipeline run date"
+        tests:
+          - not_null
+      - name: products_collected
+        description: "Non-negative count of scraped products"
+        tests:
+          - not_null
+      - name: duration_seconds
+        description: "Run duration in seconds (DECIMAL(12,2))"
+        tests:
+          - not_null
+      - name: started_at
+        description: "Pipeline start timestamp"
+        tests:
+          - not_null
+      - name: finished_at
+        description: "Validated finish timestamp (NULL if unfinished or finished before started)"
+        tests:
+          - not_null
+
+  - name: slv_market_snapshots
+    description: "Market level price and inventory snapshots with DECIMAL(12,2) pricing."
+    columns:
+      - name: snapshot_id
+        description: "Snapshot primary key"
+        tests:
+          - unique
+          - not_null
+      - name: collected_date
+        description: "Collection calendar date"
+        tests:
+          - not_null
+      - name: store
+        description: "Standardized uppercase retail store"
+        tests:
+          - not_null
+      - name: product_id
+        description: "Product identifier (FK)"
+        tests:
+          - not_null
+      - name: price
+        description: "Validated market price (> 0 and < 1,000,000, DECIMAL(12,2); NULL when flagged as extreme outlier)"
+        tests:
+          - not_null:
+              config:
+                where: "NOT is_price_outlier"
+      - name: discount_pct
+        description: "Discount percentage bounded in [0, 100] (DECIMAL(12,2))"
+        tests:
+          - not_null
+      - name: stock_status
+        description: "Standardized stock availability status"
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['IN_STOCK', 'OUT_OF_STOCK', 'LOW_STOCK_SIGNAL']
+      - name: change_type
+        description: "Observed CDC state delta"
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['INSERT', 'UPDATE', 'NO_CHANGE']
+      - name: collected_at
+        description: "Snapshot collection timestamp"
+        tests:
+          - not_null
+
+  - name: slv_stores
+    description: "Master retail stores dimension with uppercase store_id keys, lowercase domains, and Infinity Date validity."
+    columns:
+      - name: store_id
+        description: "Store primary key (UPPERCASE to join cleanly with all Silver store columns)"
+        tests:
+          - unique
+          - not_null
+      - name: store_name
+        description: "Retailer display name"
+        tests:
+          - not_null
+      - name: domain
+        description: "Normalized lowercase domain"
+        tests:
+          - not_null
+      - name: business_type
+        description: "Standardized uppercase business classification"
+        tests:
+          - not_null
