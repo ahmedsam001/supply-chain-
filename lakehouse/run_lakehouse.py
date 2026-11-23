@@ -29,6 +29,9 @@ TRANS_DIR = REPO_ROOT / "transformations"
 AZURE_SYNC = REPO_ROOT / "data_collection" / "azure_sync.py"
 
 HOURLY_MODELS = [
+    "dim_date",
+    "slv_stores",
+    "dim_store",
     "slv_products",
     "slv_price_history",
     "slv_market_snapshots",
@@ -77,7 +80,7 @@ def main() -> None:
     else:
         select_args = ["--select", *HOURLY_MODELS]
         _run([dbt_bin, "run", "--profiles-dir", ".", *select_args], cwd=TRANS_DIR)
-        _run([dbt_bin, "test", "--profiles-dir", ".", *select_args], cwd=TRANS_DIR)
+        _run([dbt_bin, "test", "--profiles-dir", ".", "--indirect-selection=cautious", *select_args], cwd=TRANS_DIR)
 
     # 3. Export & upload Silver + Gold Parquet to Azure ADLS Gen2
     extra = ["--local-only"] if args.local else []
