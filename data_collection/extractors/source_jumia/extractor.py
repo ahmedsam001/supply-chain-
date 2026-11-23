@@ -9,21 +9,25 @@ Method: Static HTML (Fast, server-rendered, no browser needed).
 from __future__ import annotations
 
 import asyncio
+import os
 import random
 import re
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse
 
+import httpx
 import structlog
-from curl_cffi import requests as curl_requests
 
+from compliance.compliance_check import ComplianceChecker
 from extractors.base import (
     BaseExtractor,
+    ComplianceError,
     ExtractionError,
-    DESKTOP_USER_AGENTS,
-    ACCEPT_LANGUAGE_HEADERS,
+    load_raw_snapshot_bytes,
+    save_raw_snapshot_bytes,
 )
 from normalization.schema import (
     AvailabilityScope,
@@ -40,6 +44,7 @@ from normalization.schema import (
 from extractors.source_jumia.config import (
     BASE_URL,
     CATEGORY_URLS,
+    DEFAULT_BOT_USER_AGENT,
     DEPARTMENT_URLS,
     DISALLOWED_PATH_PATTERNS,
     MAX_PAGES_PER_CATEGORY,
@@ -53,8 +58,6 @@ from extractors.source_jumia.parser import (
     parse_delivery_zones,
     parse_product_detail_page,
 )
-
-from pathlib import Path
 
 logger = structlog.get_logger()
 
@@ -85,73 +88,130 @@ class JumiaExtractor(BaseExtractor):
         self._fixture_path = Path(fixture_path) if fixture_path else None
         self._pdp_fixture_path = Path(pdp_fixture_path) if pdp_fixture_path else None
         self._initial_observations: dict[str, ProductObservation] = {}
-        self._playwright = None
-        self._playwright_cm = None
-        self._playwright_browser = None
-        self._playwright_page = None
+        self._bot_client: Optional[httpx.AsyncClient] = None
+        contact = os.getenv("ALERT_EMAIL_RECIPIENT", "").strip()
+        default_ua = (
+            f"EgyptRetailAnalyticsBot/1.0 (+https://github.com/ahmedsam001/supply-chain-; contact: {contact})"
+            if contact
+            else DEFAULT_BOT_USER_AGENT
+        )
+        self._bot_user_agent = os.getenv("JUMIA_BOT_USER_AGENT", "").strip() or default_ua
 
     async def _cleanup(self) -> None:
-        """Safely close Playwright and browser instances."""
-        if self._playwright_browser:
+        """Safely close Jumia HTTP client and base resources."""
+        if self._bot_client:
             try:
-                await self._playwright_browser.close()
+                await self._bot_client.aclose()
             except Exception:
                 pass
-            self._playwright_browser = None
-            self._playwright_page = None
-        if self._playwright:
-            try:
-                await self._playwright.stop()
-            except Exception:
-                pass
-            self._playwright = None
+            self._bot_client = None
         await super()._cleanup()
 
-    async def _fetch_html(self, url: str) -> str:
-        """Fetch Jumia HTML with curl_cffi, falling back to Chrome for Cloudflare challenges."""
-        try:
-            response = await self.fetch(url)
-            return response.text
-        except curl_requests.exceptions.HTTPError as exc:
-            status = getattr(exc.response, "status_code", 0)
-            if status != 403:
-                raise
-
-        if not self._playwright_browser:
-            from playwright.async_api import async_playwright
-
-            self._playwright_cm = async_playwright()
-            self._playwright = await self._playwright_cm.start()
-            chrome_bin = "/usr/bin/google-chrome" if Path("/usr/bin/google-chrome").exists() else None
-            launch_kwargs = {
-                "headless": True,
-                "args": [
-                    "--disable-blink-features=AutomationControlled",
-                    "--no-sandbox",
-                    "--disable-dev-shm-usage",
-                ],
-            }
-            if chrome_bin:
-                launch_kwargs["executable_path"] = chrome_bin
-            self._playwright_browser = await self._playwright.chromium.launch(**launch_kwargs)
-            self._playwright_page = await self._playwright_browser.new_page(
-                user_agent=random.choice(DESKTOP_USER_AGENTS),
-                viewport={"width": 1920, "height": 1080},
-                extra_http_headers={
-                    "Accept-Language": random.choice(ACCEPT_LANGUAGE_HEADERS),
-                    "Referer": f"{BASE_URL}/",
+    async def _get_bot_client(self) -> httpx.AsyncClient:
+        if self._bot_client is None:
+            proxy = os.getenv("PROXY_URL") or os.getenv("HTTPS_PROXY") or os.getenv("HTTP_PROXY") or None
+            self._bot_client = httpx.AsyncClient(
+                proxy=proxy,
+                timeout=30.0,
+                follow_redirects=True,
+                headers={
+                    "User-Agent": self._bot_user_agent,
+                    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+                    "Accept-Language": "en-US,en;q=0.9,ar-EG;q=0.8",
                 },
             )
+        return self._bot_client
 
-        resp = await self._playwright_page.goto(
-            url,
-            wait_until="domcontentloaded",
-            timeout=30000,
-        )
-        if resp is not None and resp.status >= 400:
-            raise ExtractionError(f"HTTP {resp.status} for {url}")
-        await asyncio.sleep(random.uniform(1.5, 3.5))
-        return await self._playwright_page.content()
+    async def _fetch_html(self, url: str) -> str:
+        """
+        Fetch Jumia HTML using a transparent, clearly identified Bot User-Agent
+        as explicitly required by Jumia's robots.txt policy (< 200 RPM, no fake browser UAs).
+        """
+        # Enforce live robots.txt disallow rules
+        if self._robots_txt:
+            parsed_path = urlparse(url).path or "/"
+            if not ComplianceChecker().is_path_allowed(self._robots_txt, parsed_path):
+                msg = f"BLOCKED: path '{parsed_path}' is disallowed by live robots.txt for {url}"
+                if self._manifest:
+                    self._manifest.blocked_reason = msg
+                raise ComplianceError(msg)
+
+        # Offline replay support
+        if self.replay_run_id:
+            snap = self._replay_snapshots.get(url)
+            if snap is None and self._replay_cursor < len(self._replay_ordered):
+                snap = self._replay_ordered[self._replay_cursor]
+                self._replay_cursor += 1
+            if snap is None:
+                raise ExtractionError(f"URL not found in replay snapshot store: {url}")
+            body_bytes = load_raw_snapshot_bytes(snap, self._replay_dir)
+            self._request_count += 1
+            if self._manifest:
+                self._manifest.record_http_status(snap["status_code"])
+                self._manifest.pages_parsed += 1
+            return body_bytes.decode("utf-8", errors="replace")
+
+        await self._rate_limit_delay()
+        client = await self._get_bot_client()
+        log = logger.bind(url=url, run_id=self.run_id)
+        backoff_schedule = [5.0, 15.0, 30.0]
+
+        response = None
+        elapsed_ms = 0
+        for attempt in range(len(backoff_schedule) + 1):
+            t0 = time.monotonic()
+            try:
+                response = await client.get(url)
+            except (httpx.TimeoutException, httpx.TransportError) as net_err:
+                if attempt < len(backoff_schedule):
+                    delay = backoff_schedule[attempt] + random.uniform(1.0, 3.0)
+                    log.warning(
+                        "jumia.fetch.network_retry",
+                        error=f"{type(net_err).__name__}: {net_err}",
+                        attempt=attempt + 1,
+                        delay=round(delay, 2),
+                    )
+                    await asyncio.sleep(delay)
+                    continue
+                raise ExtractionError(f"{type(net_err).__name__} for {url}") from net_err
+            elapsed_ms = int((time.monotonic() - t0) * 1000)
+
+            if self._manifest:
+                self._manifest.record_http_status(response.status_code)
+                self._manifest.pages_parsed += 1
+
+            save_raw_snapshot_bytes(
+                self.snapshot_run_dir,
+                url,
+                response.status_code,
+                response.content,
+                dict(response.headers),
+                elapsed_ms=elapsed_ms,
+            )
+
+            if response.status_code in (429, 500, 502, 503, 504) and attempt < len(backoff_schedule):
+                delay = backoff_schedule[attempt] + random.uniform(1.0, 3.0)
+                log.warning(
+                    "jumia.fetch.retry_backoff",
+                    status_code=response.status_code,
+                    attempt=attempt + 1,
+                    delay=round(delay, 2),
+                )
+                await asyncio.sleep(delay)
+                continue
+            break
+
+        if response.status_code >= 400:
+            log.warning(
+                "jumia.fetch.http_error",
+                status_code=response.status_code,
+                server=response.headers.get("server"),
+                cf_ray=response.headers.get("cf-ray"),
+                elapsed_ms=elapsed_ms,
+            )
+            raise ExtractionError(f"HTTP {response.status_code} for {url}")
+
+        return response.text
 
     def source_config(self) -> Source:
         return Source(

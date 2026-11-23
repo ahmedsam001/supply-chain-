@@ -67,8 +67,14 @@ CATEGORY_URLS = {
 PHONE_CATEGORIES = list(DEPARTMENT_URLS["mobiles_tablets"].keys())
 
 # Jumia rate limit policy from robots.txt:
-# "Site scraping is permitted IF user-agent clearly identifies as a bot with owner url or contact,
-# and uses less than 200 requests per minute."
+# "Site scraping is permitted IF the user-agent clearly identifies it as a bot and
+# the bot owner and is using less than 200 requests per minute.
+# Bot identification must have an owner url or contact if we need to contact them.
+# Bots with fake user-agent will be blocked."
+BOT_OWNER_URL = "https://github.com/ahmedsam001/supply-chain-"
+DEFAULT_BOT_USER_AGENT = (
+    f"EgyptRetailAnalyticsBot/1.0 (+{BOT_OWNER_URL})"
+)
 MAX_REQUESTS_PER_MINUTE = 30  # Conservative, well under 200 RPM limit
 MIN_DELAY_SECONDS = 1.5
 MAX_DELAY_SECONDS = 3.0
